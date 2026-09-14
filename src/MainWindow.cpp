@@ -1,4 +1,5 @@
 #include "MainWindow.h"
+#include "StickerWrapper.h"
 #include "ui_MainWindow.h"
 #include <QMessageBox>
 
@@ -7,7 +8,6 @@ MainWindow::MainWindow(QWidget *parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-    setWindowFlags(Qt::Tool);
 }
 
 MainWindow::~MainWindow()
@@ -19,5 +19,7 @@ MainWindow::~MainWindow()
 // on_<objectName>_<signalName>
 void MainWindow::on_createStickerBtn_clicked()
 {
-    QMessageBox::information(this, "Hello!", "You clicked the button!");
+    // QMessageBox::information(this, "Hello!", "You clicked the button!");
+    StickerWrapper* stWrapper = new StickerWrapper();
+    stWrapper->show();
 }
