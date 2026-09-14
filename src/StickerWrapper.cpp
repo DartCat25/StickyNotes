@@ -9,6 +9,7 @@ StickerWrapper::StickerWrapper(QWidget* parent)
     : QMainWindow(parent)
 {
     setAttribute(Qt::WA_DeleteOnClose); //Enforce deletion
+    setAttribute(Qt::WA_TranslucentBackground);
     setWindowFlags(Qt::FramelessWindowHint | Qt::Tool);
     
     QGraphicsScene* scene = new QGraphicsScene(this); 
