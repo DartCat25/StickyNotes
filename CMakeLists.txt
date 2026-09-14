@@ -11,14 +11,9 @@ set(CMAKE_AUTORCC ON)
 find_package(Qt6 REQUIRED COMPONENTS Core Gui Widgets Quick)
 
 # Define your source files
-set(PROJECT_SOURCES
-    src/main.cpp
-    src/MainWindow.cpp
-    src/MainWindow.h
-    src/MainWindow.ui
-)
+file(GLOB_RECURSE SOURCES "src/*.cpp")
 
-add_executable(StickyNotes ${PROJECT_SOURCES})
+add_executable(StickyNotes ${SOURCES})
 
 target_include_directories(StickyNotes PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/src
