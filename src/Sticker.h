@@ -1,5 +1,7 @@
 #pragma once
 
+class StickerWrapper;
+
 #include <qframe.h>
 #include <qtmetamacros.h>
 #include <qwidget.h>
@@ -8,11 +10,19 @@
 class Sticker : public QFrame
 {
 public:
-    Sticker(QWidget* parent = nullptr);
+    Sticker(StickerWrapper* parent = nullptr);
     ~Sticker();
+
+protected:
+    bool eventFilter(QObject* watched, QEvent* event) override;
 
 private:
     void closeButton_clicked();
+    void header_pressed();
+    void header_released();
 
     QLineEdit* nameEdit;
+    QFrame* header;
+
+    StickerWrapper* wrapper;
 };

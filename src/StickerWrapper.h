@@ -2,6 +2,7 @@
 
 #include "Sticker.h"
 #include <qgraphicsproxywidget.h>
+#include <QGraphicsView>
 #include <qinputmethod.h>
 #include <qmainwindow.h>
 
@@ -12,7 +13,21 @@ public:
     ~StickerWrapper();
 
     void closeWindow();
+
+    void startDragging();
+    void endDragging();
+
+protected:
+    void mouseMoveEvent(QMouseEvent *event) override;
+
 private:
+    void updateMask();
+
     Sticker* sticker;
+
+    QGraphicsView* view;
     QGraphicsProxyWidget* proxy;
+
+    QPointF lastMousePos;
+    bool dragging;
 };

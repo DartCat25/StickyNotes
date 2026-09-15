@@ -1,6 +1,7 @@
 #include "Sticker.h"
 #include "StickerWrapper.h"
 #include <qboxlayout.h>
+#include <qdebug.h>
 #include <qframe.h>
 #include <qnamespace.h>
 #include <qpushbutton.h>
@@ -13,10 +14,11 @@
 #define HEADER_HEIGHT 40
 #define CLOSE_BTN_SIZE 20
 
-Sticker::Sticker(QWidget* parent)
+Sticker::Sticker(StickerWrapper* parent)
     : QFrame(parent)
 {
-
+    wrapper = parent;
+    
     setStyleSheet("background: #fef5c1;");
 
     setBaseSize(WIDTH, 300);
@@ -27,12 +29,16 @@ Sticker::Sticker(QWidget* parent)
 
     // // Header
     
-    QFrame* header = new QFrame();
+    header = new QFrame();
     header->setStyleSheet("background: #f7e9a2;");
     header->setFixedHeight(HEADER_HEIGHT);
     header->setSizePolicy(QSizePolicy(
         QSizePolicy::Expanding,
         QSizePolicy::Fixed));
+    header->setMouseTracking(true);
+    header->installEventFilter(this);
+
+    
 
     vbox->addWidget(header, 0);
     
@@ -40,6 +46,7 @@ Sticker::Sticker(QWidget* parent)
 
     QLineEdit* nameEdit = new QLineEdit();
     nameEdit->setStyleSheet("border: none;");
+    nameEdit->setCursor(Qt::ArrowCursor);
 
     hbox->addWidget(nameEdit, 1);
 
@@ -66,8 +73,36 @@ Sticker::~Sticker()
 
 }
 
+bool Sticker::eventFilter(QObject* watched, QEvent* event)
+{
+    if (watched == header &&
+        (
+            event->type() == QEvent::MouseButtonPress
+            || event->type() == QEvent::MouseButtonRelease
+        ))
+    {
+        if (event->type() == QEvent::MouseButtonPress)
+            header_pressed();
+        else
+            header_released();
+    }
+
+    return QFrame::eventFilter(watched, event);
+}
+
 void Sticker::closeButton_clicked()
 {
     if (parent())
         ((StickerWrapper*)parentWidget())->closeWindow();
+}
+
+void Sticker::header_pressed()
+{
+    qDebug() << "Mouse clicked";
+    wrapper->startDragging();
+}
+
+void Sticker::header_released()
+{
+    wrapper->endDragging();
 }
