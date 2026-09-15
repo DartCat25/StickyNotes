@@ -28,6 +28,6 @@ private:
     QGraphicsView* view;
     QGraphicsProxyWidget* proxy;
 
-    QPointF lastMousePos;
+    QPoint lastMousePos;
     bool dragging;
 };

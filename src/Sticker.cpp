@@ -14,8 +14,7 @@
 #define HEADER_HEIGHT 40
 #define CLOSE_BTN_SIZE 20
 
-Sticker::Sticker(StickerWrapper* parent)
-    : QFrame(parent)
+Sticker::Sticker(StickerWrapper* parent) : QFrame()
 {
     wrapper = parent;
     
@@ -85,6 +84,7 @@ bool Sticker::eventFilter(QObject* watched, QEvent* event)
             header_pressed();
         else
             header_released();
+        return true;
     }
 
     return QFrame::eventFilter(watched, event);
@@ -92,8 +92,7 @@ bool Sticker::eventFilter(QObject* watched, QEvent* event)
 
 void Sticker::closeButton_clicked()
 {
-    if (parent())
-        ((StickerWrapper*)parentWidget())->closeWindow();
+    wrapper->closeWindow();
 }
 
 void Sticker::header_pressed()
