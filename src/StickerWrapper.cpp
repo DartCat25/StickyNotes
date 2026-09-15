@@ -16,6 +16,8 @@
 #define FORCE 0.25
 #define FADE 0.97
 
+// // Constructor / Destructor
+
 StickerWrapper::StickerWrapper(QWidget* parent)
 : QGraphicsView(parent)
 {
@@ -42,7 +44,6 @@ StickerWrapper::StickerWrapper(QWidget* parent)
     sticker->move(0, 0);
 
     proxy->setTransformOriginPoint(sticker->rect().center());
-    // proxy->setPos(100, 100);
     proxy->setRotation(angle);
 
     proxy->setPos(WIDTH/2 - sticker->width()/2, HEIGHT/2 - sticker->height()/2);
@@ -52,6 +53,8 @@ StickerWrapper::StickerWrapper(QWidget* parent)
 StickerWrapper::~StickerWrapper()
 {
 }
+
+// // External Events
 
 void StickerWrapper::closeWindow()
 {
@@ -69,6 +72,8 @@ void StickerWrapper::endDragging()
     dragging = false;
 }
 
+// // Inner funcs
+
 void StickerWrapper::rotate(float angle)
 {
     proxy->setRotation(angle);
@@ -78,20 +83,13 @@ void StickerWrapper::rotate(float angle)
 
 void StickerWrapper::updateMask()
 {
-    QRectF localRect = sticker->rect();
-
-    QPolygonF scenePath = proxy->mapToScene(localRect);
-    
-    // Переводим путь со сцены в координаты самого окна (Viewport)
-    QPolygonF viewPath = mapFromScene(scenePath);
-    
-    // Создаем регион (маску) из полученного повернутого контура
+    QPolygonF scenePath = proxy->mapToScene(sticker->rect());   
     QRegion maskRegion(scenePath.toPolygon());
     
-    // Применяем маску к окну. Все, что вне этого повернутого прямоугольника, 
-    // станет невидимым и кликабельным насквозь.
     setMask(maskRegion);
 }
+
+// // Slot Events
 
 void StickerWrapper::mouseMoveEvent(QMouseEvent *event)
 {
@@ -111,6 +109,5 @@ void StickerWrapper::mouseMoveEvent(QMouseEvent *event)
         return;
     }
 
-    // if (!dragging)
     QGraphicsView::mouseMoveEvent(event);
 }

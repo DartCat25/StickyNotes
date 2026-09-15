@@ -28,7 +28,6 @@ private:
 
     Sticker* sticker;
 
-    // QGraphicsView* view;
     QGraphicsScene* scene;
     QGraphicsProxyWidget* proxy;
 
