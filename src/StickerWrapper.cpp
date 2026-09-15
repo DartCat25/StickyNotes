@@ -12,11 +12,15 @@
 #define WIDTH 412
 #define HEIGHT 412
 
+#define MAX_ANGLE 30.0
+#define FORCE 0.25
+#define FADE 0.97
 
 StickerWrapper::StickerWrapper(QWidget* parent)
 : QGraphicsView(parent)
 {
     dragging = false;
+    angle = 0;
     
     setAttribute(Qt::WA_DeleteOnClose); //Enforce deletion
     setAttribute(Qt::WA_TranslucentBackground);
@@ -39,7 +43,7 @@ StickerWrapper::StickerWrapper(QWidget* parent)
 
     proxy->setTransformOriginPoint(sticker->rect().center());
     // proxy->setPos(100, 100);
-    proxy->setRotation(30.0);
+    proxy->setRotation(angle);
 
     proxy->setPos(WIDTH/2 - sticker->width()/2, HEIGHT/2 - sticker->height()/2);
     updateMask();
@@ -65,15 +69,12 @@ void StickerWrapper::endDragging()
     dragging = false;
 }
 
-// void StickerWrapper::updateMask()
-// {
-//     QPolygonF scenePolygon = proxy->mapToScene(proxy->rect());
-    
-
-//     QPolygon windowPolygon = view->mapFromScene(scenePolygon);
-
-//     setMask(scenePolygon.toPolygon());
-// }
+void StickerWrapper::rotate(float angle)
+{
+    proxy->setRotation(angle);
+    this->angle = angle;
+    updateMask();
+}
 
 void StickerWrapper::updateMask()
 {
@@ -98,7 +99,12 @@ void StickerWrapper::mouseMoveEvent(QMouseEvent *event)
 
     if ((event->buttons() & Qt::LeftButton) && dragging)
     {
-        move(pos() + (current - lastMousePos));
+        QPoint vec = current - lastMousePos;
+
+        double newAngle = std::min(std::max(angle * FADE + vec.x() * FORCE, -MAX_ANGLE), MAX_ANGLE);
+
+        move(pos() + vec);
+        rotate(newAngle);
         
         lastMousePos = current;
         event->accept();

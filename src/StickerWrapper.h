@@ -23,6 +23,7 @@ protected:
     void mouseMoveEvent(QMouseEvent *event) override;
 
 private:
+    void rotate(float angle);
     void updateMask();
 
     Sticker* sticker;
@@ -33,4 +34,6 @@ private:
 
     QPoint lastMousePos;
     bool dragging;
+
+    double angle;
 };
