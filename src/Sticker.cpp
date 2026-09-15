@@ -20,8 +20,8 @@ Sticker::Sticker(StickerWrapper* parent) : QFrame()
     
     setStyleSheet("background: #fef5c1;");
 
-    setBaseSize(WIDTH, 300);
-    resize(WIDTH, 300);
+    setBaseSize(WIDTH, HEIGHT);
+    resize(WIDTH, HEIGHT);
 
     QVBoxLayout* vbox = new QVBoxLayout(this);
     vbox->setContentsMargins(0, 0, 0, 0);
