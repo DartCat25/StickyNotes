@@ -18,8 +18,8 @@ protected:
 
 private:
     void closeButton_clicked();
-    void header_pressed();
-    void header_released();
+    void header_pressed(QMouseEvent* event);
+    void header_released(QMouseEvent* event);
 
     QLineEdit* nameEdit;
     QFrame* header;

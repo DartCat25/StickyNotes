@@ -20,6 +20,6 @@ MainWindow::~MainWindow()
 void MainWindow::on_createStickerBtn_clicked()
 {
     // QMessageBox::information(this, "Hello!", "You clicked the button!");
-    StickerWrapper* stWrapper = new StickerWrapper();
+    StickerWrapper* stWrapper = new StickerWrapper(this);
     stWrapper->show();
 }

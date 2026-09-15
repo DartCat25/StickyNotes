@@ -2,6 +2,7 @@
 #include "StickerWrapper.h"
 #include <qboxlayout.h>
 #include <qdebug.h>
+#include <qevent.h>
 #include <qframe.h>
 #include <qnamespace.h>
 #include <qpushbutton.h>
@@ -80,10 +81,12 @@ bool Sticker::eventFilter(QObject* watched, QEvent* event)
             || event->type() == QEvent::MouseButtonRelease
         ))
     {
+        QMouseEvent* mouseEvent = (QMouseEvent*)event;
+
         if (event->type() == QEvent::MouseButtonPress)
-            header_pressed();
+            header_pressed(mouseEvent);
         else
-            header_released();
+            header_released(mouseEvent);
         return true;
     }
 
@@ -95,13 +98,13 @@ void Sticker::closeButton_clicked()
     wrapper->closeWindow();
 }
 
-void Sticker::header_pressed()
+void Sticker::header_pressed(QMouseEvent* event)
 {
     qDebug() << "Mouse clicked";
-    wrapper->startDragging();
+    wrapper->startDragging(event->globalPosition().toPoint());
 }
 
-void Sticker::header_released()
+void Sticker::header_released(QMouseEvent* event)
 {
     wrapper->endDragging();
 }

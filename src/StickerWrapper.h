@@ -16,7 +16,7 @@ public:
 
     void closeWindow();
 
-    void startDragging();
+    void startDragging(QPoint start);
     void endDragging();
 
 protected:
@@ -31,6 +31,6 @@ private:
     QGraphicsScene* scene;
     QGraphicsProxyWidget* proxy;
 
-    QPoint lastMousePos;
+    QPoint startMousePos;
     bool dragging;
 };

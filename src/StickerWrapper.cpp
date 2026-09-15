@@ -7,6 +7,11 @@
 #include <qpainter.h>
 #include <qpoint.h>
 #include <qpolygon.h>
+#include <QWindow>
+
+#define WIDTH 412
+#define HEIGHT 412
+
 
 StickerWrapper::StickerWrapper(QWidget* parent)
 : QGraphicsView(parent)
@@ -15,12 +20,13 @@ StickerWrapper::StickerWrapper(QWidget* parent)
     
     setAttribute(Qt::WA_DeleteOnClose); //Enforce deletion
     setAttribute(Qt::WA_TranslucentBackground);
-    setWindowFlags(Qt::FramelessWindowHint | Qt::Tool);
+    setWindowFlags(Qt::FramelessWindowHint | Qt::Popup);
     setMouseTracking(true);
-    resize(600, 600);
+    resize(WIDTH, HEIGHT);
     
     scene = new QGraphicsScene(this); 
-
+    scene->setSceneRect(0, 0, WIDTH, HEIGHT);
+    
     setStyleSheet("background: transparent; border: none;");
     setRenderHint(QPainter::Antialiasing);
     setRenderHint(QPainter::SmoothPixmapTransform);
@@ -35,7 +41,7 @@ StickerWrapper::StickerWrapper(QWidget* parent)
     // proxy->setPos(100, 100);
     proxy->setRotation(30.0);
 
-    proxy->setPos(300 - sticker->width()/2, 300 - sticker->height()/2);
+    proxy->setPos(WIDTH/2 - sticker->width()/2, HEIGHT/2 - sticker->height()/2);
     updateMask();
 }
 
@@ -48,8 +54,9 @@ void StickerWrapper::closeWindow()
     close();
 }
 
-void StickerWrapper::startDragging()
+void StickerWrapper::startDragging(QPoint start)
 {
+    startMousePos = start;
     dragging = true;
 }
 
@@ -87,20 +94,17 @@ void StickerWrapper::updateMask()
 
 void StickerWrapper::mouseMoveEvent(QMouseEvent *event)
 {
-    QPoint current = event->position().toPoint(); 
+    QPoint current = event->globalPosition().toPoint(); 
 
     if ((event->buttons() & Qt::LeftButton) && dragging)
     {
-        QPoint pos_ = window()->pos();
-        pos_ += current - lastMousePos;
+        QPoint pos_ = pos();
+        pos_ += current - startMousePos;
 
-        window()->move(pos_);
-        lastMousePos = current;
+        move(pos_);
         event->accept();
         return;
     }
-
-    lastMousePos = current;
 
     // if (!dragging)
     QGraphicsView::mouseMoveEvent(event);
