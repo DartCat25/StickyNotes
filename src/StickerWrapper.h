@@ -3,10 +3,12 @@
 #include "Sticker.h"
 #include <qgraphicsproxywidget.h>
 #include <QGraphicsView>
+#include <QGraphicsScene>
+#include <qgraphicsscene.h>
 #include <qinputmethod.h>
 #include <qmainwindow.h>
 
-class StickerWrapper : public QMainWindow
+class StickerWrapper : public QGraphicsView
 {
 public:
     StickerWrapper(QWidget* parent = nullptr);
@@ -25,7 +27,8 @@ private:
 
     Sticker* sticker;
 
-    QGraphicsView* view;
+    // QGraphicsView* view;
+    QGraphicsScene* scene;
     QGraphicsProxyWidget* proxy;
 
     QPoint lastMousePos;

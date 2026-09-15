@@ -3,39 +3,40 @@
 #include <qgraphicsview.h>
 #include <qmainwindow.h>
 #include <qnamespace.h>
-#include <QGraphicsScene>
 #include <QGraphicsProxyWidget>
 #include <qpainter.h>
 #include <qpoint.h>
 #include <qpolygon.h>
 
 StickerWrapper::StickerWrapper(QWidget* parent)
-    : QMainWindow(parent)
+: QGraphicsView(parent)
 {
     dragging = false;
-
+    
     setAttribute(Qt::WA_DeleteOnClose); //Enforce deletion
     setAttribute(Qt::WA_TranslucentBackground);
     setWindowFlags(Qt::FramelessWindowHint | Qt::Tool);
     setMouseTracking(true);
+    resize(600, 600);
     
-    QGraphicsScene* scene = new QGraphicsScene(this); 
-    view = new QGraphicsView(scene, this);
+    scene = new QGraphicsScene(this); 
 
-    view->setStyleSheet("background: transparent; border: none;");
-    view->setRenderHint(QPainter::Antialiasing);
-    view->setRenderHint(QPainter::SmoothPixmapTransform);
-    setCentralWidget(view);
+    setStyleSheet("background: transparent; border: none;");
+    setRenderHint(QPainter::Antialiasing);
+    setRenderHint(QPainter::SmoothPixmapTransform);
     
+    setScene(scene);
+
     sticker = new Sticker(this);
     proxy = scene->addWidget(sticker);
+    sticker->move(0, 0);
 
-    // proxy->setTransformOriginPoint(sticker->rect().center());
-    proxy->setRotation(-20.0); 
-    resize(600, 600);
+    proxy->setTransformOriginPoint(sticker->rect().center());
+    // proxy->setPos(100, 100);
+    proxy->setRotation(30.0);
 
-    // proxy->setPos(300 - sticker->width()/2, 300 - sticker->height()/2);
-    // updateMask();
+    proxy->setPos(300 - sticker->width()/2, 300 - sticker->height()/2);
+    updateMask();
 }
 
 StickerWrapper::~StickerWrapper()
@@ -59,7 +60,7 @@ void StickerWrapper::endDragging()
 
 // void StickerWrapper::updateMask()
 // {
-//     QPolygonF scenePolygon = proxy->mapToScene(sticker->rect());
+//     QPolygonF scenePolygon = proxy->mapToScene(proxy->rect());
     
 
 //     QPolygon windowPolygon = view->mapFromScene(scenePolygon);
@@ -71,21 +72,17 @@ void StickerWrapper::updateMask()
 {
     QRectF localRect = sticker->rect();
 
-    QPolygonF scenePoly = proxy->mapToScene(localRect);
-    QPolygon viewPoly = view->mapFromScene(scenePoly);
-
-    QBitmap mask(view->size());
-    mask.clear();
-
-    QPainter painter(&mask);
-    painter.setRenderHint(QPainter::Antialiasing, false);
-    painter.setBrush(Qt::color1);
-    painter.setPen(Qt::NoPen);
-
-    painter.drawPolygon(viewPoly);
-    painter.end();
-
-    view->setMask(viewPoly);
+    QPolygonF scenePath = proxy->mapToScene(localRect);
+    
+    // Переводим путь со сцены в координаты самого окна (Viewport)
+    QPolygonF viewPath = mapFromScene(scenePath);
+    
+    // Создаем регион (маску) из полученного повернутого контура
+    QRegion maskRegion(scenePath.toPolygon());
+    
+    // Применяем маску к окну. Все, что вне этого повернутого прямоугольника, 
+    // станет невидимым и кликабельным насквозь.
+    setMask(maskRegion);
 }
 
 void StickerWrapper::mouseMoveEvent(QMouseEvent *event)
@@ -106,5 +103,5 @@ void StickerWrapper::mouseMoveEvent(QMouseEvent *event)
     lastMousePos = current;
 
     // if (!dragging)
-    QMainWindow::mouseMoveEvent(event);
+    QGraphicsView::mouseMoveEvent(event);
 }
