@@ -31,6 +31,6 @@ private:
     QGraphicsScene* scene;
     QGraphicsProxyWidget* proxy;
 
-    QPoint startMousePos;
+    QPoint lastMousePos;
     bool dragging;
 };

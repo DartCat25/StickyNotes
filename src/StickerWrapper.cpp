@@ -20,7 +20,7 @@ StickerWrapper::StickerWrapper(QWidget* parent)
     
     setAttribute(Qt::WA_DeleteOnClose); //Enforce deletion
     setAttribute(Qt::WA_TranslucentBackground);
-    setWindowFlags(Qt::FramelessWindowHint | Qt::Popup);
+    setWindowFlags(Qt::FramelessWindowHint | Qt::Window | Qt::Tool | Qt::X11BypassWindowManagerHint);
     setMouseTracking(true);
     resize(WIDTH, HEIGHT);
     
@@ -56,7 +56,7 @@ void StickerWrapper::closeWindow()
 
 void StickerWrapper::startDragging(QPoint start)
 {
-    startMousePos = start;
+    lastMousePos = start;
     dragging = true;
 }
 
@@ -98,10 +98,9 @@ void StickerWrapper::mouseMoveEvent(QMouseEvent *event)
 
     if ((event->buttons() & Qt::LeftButton) && dragging)
     {
-        QPoint pos_ = pos();
-        pos_ += current - startMousePos;
-
-        move(pos_);
+        move(pos() + (current - lastMousePos));
+        
+        lastMousePos = current;
         event->accept();
         return;
     }
