@@ -19,11 +19,14 @@
 
 #define TEXT_MARGIN 10
 
+#define SIZE_MARGIN 20
+
 // // Constructor / destructor
 
 Sticker::Sticker(StickerWrapper* parent) : QFrame()
 {
     wrapper = parent;
+    scalingSide = 0;
     
     setStyleSheet("background: #fef5c1;");
 
@@ -116,6 +119,75 @@ bool Sticker::eventFilter(QObject* watched, QEvent* event)
     }
 
     return QFrame::eventFilter(watched, event);
+}
+
+// // Internal events
+
+void Sticker::mousePressEvent(QMouseEvent* event)
+{
+    if (event->button() == Qt::LeftButton)
+    {
+        lastMousePos = event->position();
+        QPointF clickPos = event->position();
+        QSize sz = size();
+
+
+        if (clickPos.x() < SIZE_MARGIN)
+            scalingSide |= ScalingSide::LEFT;
+        else if (clickPos.x() > sz.width() - SIZE_MARGIN)
+            scalingSide |= ScalingSide::RIGHT;
+
+        if (clickPos.y() < SIZE_MARGIN)
+            scalingSide |= ScalingSide::TOP;
+        else if (clickPos.y() > sz.width() - SIZE_MARGIN)
+            scalingSide |= ScalingSide::BOTTOM;
+
+        if (scalingSide)
+            return;
+    }
+
+    QFrame::mousePressEvent(event);
+}
+
+void Sticker::mouseMoveEvent(QMouseEvent* event)
+{
+    if (!scalingSide)
+    {
+        QFrame::mouseMoveEvent(event);
+        return;    
+    }
+
+    QPointF current = event->position();
+
+    QPointF vec = current - lastMousePos;
+
+    QPointF curPos = pos();
+    QSize curSize = size();
+
+    if (scalingSide & ScalingSide::TOP)
+    {
+        move(curPos.x(), curPos.y() + vec.y());
+        resize(curSize.width(), curSize.height() - vec.y());
+    }
+    if (scalingSide & ScalingSide::BOTTOM)
+        resize(curSize.width(), curSize.height() + vec.y());
+
+
+    if (scalingSide & ScalingSide::LEFT)
+    {
+        move(curPos.x() + vec.x(), curPos.y());
+        resize(curSize.width() - vec.x(), curSize.height());
+    }
+    if (scalingSide & ScalingSide::RIGHT)
+        resize(curSize.width() + vec.x(), curSize.height());
+
+    lastMousePos = current;
+}
+
+void Sticker::mouseReleaseEvent(QMouseEvent* event)
+{
+    scalingSide = 0;
+    QFrame::mouseReleaseEvent(event);
 }
 
 void Sticker::closeButton_clicked()

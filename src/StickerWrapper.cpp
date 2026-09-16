@@ -15,7 +15,7 @@
 
 #define MAX_ANGLE 30.0
 #define FORCE 0.1
-#define FADE 0.90
+#define FADE 0.94
 
 // // Constructor / Destructor
 
