@@ -14,8 +14,8 @@
 #define HEIGHT 412
 
 #define MAX_ANGLE 30.0
-#define FORCE 0.2
-#define FADE 0.98
+#define FORCE 0.1
+#define FADE 0.90
 
 // // Constructor / Destructor
 
@@ -27,7 +27,7 @@ StickerWrapper::StickerWrapper(QWidget* parent)
     
     setAttribute(Qt::WA_DeleteOnClose); //Enforce deletion
     setAttribute(Qt::WA_TranslucentBackground);
-    setWindowFlags(Qt::FramelessWindowHint | Qt::Window | Qt::Tool | Qt::X11BypassWindowManagerHint);
+    setWindowFlags(Qt::FramelessWindowHint | Qt::Tool | Qt::WindowStaysOnTopHint);
     setMouseTracking(true);
     resize(WIDTH, HEIGHT);
     
@@ -107,15 +107,10 @@ void StickerWrapper::mouseMoveEvent(QMouseEvent *event)
 
         double newAngle = std::min(std::max(angle * FADE + vec.x() * FORCE, -MAX_ANGLE), MAX_ANGLE);
         
-        // curPos += vec;
-        
         QPointF center = proxy->mapToScene(proxy->rect().center());
         
         QTransform rotateTransf = QTransform();
         rotateTransf.rotate(newAngle);
-        
-        // QPointF offset = current - (curPos + center);
-        // QPointF transf = diffRotate.map(offset);
         
         curPos = current - rotateTransf.map(pivot - center) - center;
         
