@@ -8,13 +8,14 @@
 #include <qpoint.h>
 #include <qpolygon.h>
 #include <QWindow>
+#include <qtransform.h>
 
 #define WIDTH 412
 #define HEIGHT 412
 
 #define MAX_ANGLE 30.0
-#define FORCE 0.25
-#define FADE 0.97
+#define FORCE 0.2
+#define FADE 0.98
 
 // // Constructor / Destructor
 
@@ -33,7 +34,6 @@ StickerWrapper::StickerWrapper(QWidget* parent)
     scene = new QGraphicsScene(this); 
     scene->setSceneRect(0, 0, WIDTH, HEIGHT);
     
-    setStyleSheet("background: transparent; border: none;");
     setRenderHint(QPainter::Antialiasing);
     setRenderHint(QPainter::SmoothPixmapTransform);
     
@@ -93,17 +93,29 @@ void StickerWrapper::updateMask()
 
 void StickerWrapper::mouseMoveEvent(QMouseEvent *event)
 {
-    QPoint current = event->globalPosition().toPoint(); 
-
+    
     if ((event->buttons() & Qt::LeftButton) && dragging)
     {
-        QPoint vec = current - lastMousePos;
+        QPointF current = event->globalPosition();
+        QPointF curPos = pos();
+        QPointF vec = current - lastMousePos;
 
         double newAngle = std::min(std::max(angle * FADE + vec.x() * FORCE, -MAX_ANGLE), MAX_ANGLE);
-
-        move(pos() + vec);
-        rotate(newAngle);
         
+        curPos += vec;
+        
+        QPointF center = proxy->mapToScene(proxy->rect().center());
+        
+        QTransform diffRotate = QTransform();
+        diffRotate.rotate(angle - newAngle);
+        
+        QPointF offset = current - (curPos + center);
+        QPointF transf = diffRotate.map(offset);
+        
+        curPos += transf - offset;
+        
+        move(curPos.toPoint());
+        rotate(newAngle);
         lastMousePos = current;
         event->accept();
         return;
