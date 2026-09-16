@@ -61,9 +61,14 @@ void StickerWrapper::closeWindow()
     close();
 }
 
-void StickerWrapper::startDragging(QPoint start)
+void StickerWrapper::startDragging(QPointF start)
 {
     lastMousePos = start;
+    QTransform rotInvert = QTransform();
+    rotInvert.rotate(-angle);
+
+    QPointF center = QPointF(WIDTH/2.0, HEIGHT/2.0);
+    pivot = rotInvert.map(start - pos() - center) + center;
     dragging = true;
 }
 
@@ -102,17 +107,17 @@ void StickerWrapper::mouseMoveEvent(QMouseEvent *event)
 
         double newAngle = std::min(std::max(angle * FADE + vec.x() * FORCE, -MAX_ANGLE), MAX_ANGLE);
         
-        curPos += vec;
+        // curPos += vec;
         
         QPointF center = proxy->mapToScene(proxy->rect().center());
         
-        QTransform diffRotate = QTransform();
-        diffRotate.rotate(angle - newAngle);
+        QTransform rotateTransf = QTransform();
+        rotateTransf.rotate(newAngle);
         
-        QPointF offset = current - (curPos + center);
-        QPointF transf = diffRotate.map(offset);
+        // QPointF offset = current - (curPos + center);
+        // QPointF transf = diffRotate.map(offset);
         
-        curPos += transf - offset;
+        curPos = current - rotateTransf.map(pivot - center) - center;
         
         move(curPos.toPoint());
         rotate(newAngle);

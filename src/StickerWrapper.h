@@ -16,7 +16,7 @@ public:
 
     void closeWindow();
 
-    void startDragging(QPoint start);
+    void startDragging(QPointF start);
     void endDragging();
 
 protected:
@@ -32,6 +32,7 @@ private:
     QGraphicsProxyWidget* proxy;
 
     QPointF lastMousePos;
+    QPointF pivot;
     bool dragging;
 
     double angle;

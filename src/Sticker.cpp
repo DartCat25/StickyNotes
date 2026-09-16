@@ -101,7 +101,7 @@ void Sticker::closeButton_clicked()
 void Sticker::header_pressed(QMouseEvent* event)
 {
     qDebug() << "Mouse clicked";
-    wrapper->startDragging(event->globalPosition().toPoint());
+    wrapper->startDragging(event->globalPosition());
 }
 
 void Sticker::header_released(QMouseEvent* event)
