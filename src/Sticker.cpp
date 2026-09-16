@@ -4,16 +4,22 @@
 #include <qdebug.h>
 #include <qevent.h>
 #include <qframe.h>
+#include <qlogging.h>
 #include <qnamespace.h>
 #include <qpushbutton.h>
 #include <QVBoxLayout>
 #include <qsizepolicy.h>
+#include <qwidget.h>
 
 #define WIDTH 300
 #define HEIGHT 300
 
 #define HEADER_HEIGHT 40
 #define CLOSE_BTN_SIZE 20
+
+#define TEXT_MARGIN 10
+
+// // Constructor / destructor
 
 Sticker::Sticker(StickerWrapper* parent) : QFrame()
 {
@@ -38,13 +44,11 @@ Sticker::Sticker(StickerWrapper* parent) : QFrame()
     header->setMouseTracking(true);
     header->installEventFilter(this);
 
-    
-
     vbox->addWidget(header, 0);
     
     QHBoxLayout* hbox = new QHBoxLayout(header);
 
-    QLineEdit* nameEdit = new QLineEdit();
+    QLineEdit* nameEdit = new QLineEdit("Noname");
     nameEdit->setStyleSheet("border: none;");
     nameEdit->setCursor(Qt::ArrowCursor);
 
@@ -62,8 +66,16 @@ Sticker::Sticker(StickerWrapper* parent) : QFrame()
     hbox->addWidget(closeButton, 0);
 
     // // Body
+    QSizePolicy expand = QSizePolicy(
+        QSizePolicy::Expanding,
+        QSizePolicy::Expanding);
 
     QFrame* bodyFrame = new QFrame();
+    bodyFrame->setSizePolicy(expand);
+    bodyFrame->setContentsMargins(TEXT_MARGIN, TEXT_MARGIN, TEXT_MARGIN, TEXT_MARGIN);
+
+    textEdit = new QTextEdit(bodyFrame);
+    textEdit->setSizePolicy(expand);
 
     vbox->addWidget(bodyFrame, 1);
 }
@@ -72,6 +84,8 @@ Sticker::~Sticker()
 {
 
 }
+
+// // External events
 
 bool Sticker::eventFilter(QObject* watched, QEvent* event)
 {
@@ -87,7 +101,18 @@ bool Sticker::eventFilter(QObject* watched, QEvent* event)
             header_pressed(mouseEvent);
         else
             header_released(mouseEvent);
-        return true;
+    }
+
+    if (event->type() == QEvent::KeyPress)
+    {
+        QKeyEvent* keyPress = (QKeyEvent*) event;
+
+        if (keyPress->key() == Qt::Key_Escape)
+        {
+            setFocus();
+            event->accept();
+            return true;
+        }
     }
 
     return QFrame::eventFilter(watched, event);
@@ -100,7 +125,6 @@ void Sticker::closeButton_clicked()
 
 void Sticker::header_pressed(QMouseEvent* event)
 {
-    qDebug() << "Mouse clicked";
     wrapper->startDragging(event->globalPosition());
 }
 
