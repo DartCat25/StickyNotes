@@ -6,6 +6,7 @@ class StickerWrapper;
 #include <qtmetamacros.h>
 #include <qwidget.h>
 #include <QLineEdit>
+#include <QTextEdit>
 
 class Sticker : public QFrame
 {
@@ -23,6 +24,7 @@ private:
 
     QLineEdit* nameEdit;
     QFrame* header;
+    QTextEdit* textEdit;
 
     StickerWrapper* wrapper;
 };
