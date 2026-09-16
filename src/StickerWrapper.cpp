@@ -27,7 +27,7 @@ StickerWrapper::StickerWrapper(QWidget* parent)
     
     setAttribute(Qt::WA_DeleteOnClose); //Enforce deletion
     setAttribute(Qt::WA_TranslucentBackground);
-    setWindowFlags(Qt::FramelessWindowHint | Qt::Tool | Qt::WindowStaysOnTopHint);
+    setWindowFlags(Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint);
     setMouseTracking(true);
     resize(WIDTH, HEIGHT);
     
