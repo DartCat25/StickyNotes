@@ -73,14 +73,13 @@ Sticker::Sticker(StickerWrapper* parent) : QFrame()
         QSizePolicy::Expanding,
         QSizePolicy::Expanding);
 
-    QFrame* bodyFrame = new QFrame();
-    bodyFrame->setSizePolicy(expand);
-    bodyFrame->setContentsMargins(TEXT_MARGIN, TEXT_MARGIN, TEXT_MARGIN, TEXT_MARGIN);
-
-    textEdit = new QTextEdit(bodyFrame);
+    textEdit = new QTextEdit();
     textEdit->setSizePolicy(expand);
+    textEdit->setStyleSheet("border: none;");
+    textEdit->setMinimumSize(0, 0);
+    textEdit->installEventFilter(this);
 
-    vbox->addWidget(bodyFrame, 1);
+    vbox->addWidget(textEdit, 1);
 }
 
 Sticker::~Sticker()
@@ -109,7 +108,6 @@ bool Sticker::eventFilter(QObject* watched, QEvent* event)
     if (event->type() == QEvent::KeyPress)
     {
         QKeyEvent* keyPress = (QKeyEvent*) event;
-
         if (keyPress->key() == Qt::Key_Escape)
         {
             setFocus();

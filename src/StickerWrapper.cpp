@@ -34,7 +34,7 @@ StickerWrapper::StickerWrapper(QWidget* parent)
     
     setAttribute(Qt::WA_DeleteOnClose); //Enforce deletion
     setAttribute(Qt::WA_TranslucentBackground);
-        #ifdef Q_OS_LINUX
+    #ifdef Q_OS_LINUX
     setWindowFlags(Qt::FramelessWindowHint | Qt::Window);
     #else
     setWindowFlags(Qt::FramelessWindowHint | Qt::Tool);
