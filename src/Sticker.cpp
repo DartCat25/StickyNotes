@@ -1,6 +1,8 @@
 #include "Sticker.h"
 #include "StickerWrapper.h"
+#include <qapplication.h>
 #include <qboxlayout.h>
+#include <qcoreevent.h>
 #include <qdebug.h>
 #include <qevent.h>
 #include <qframe.h>
@@ -113,6 +115,18 @@ bool Sticker::eventFilter(QObject* watched, QEvent* event)
             setFocus();
             event->accept();
             return true;
+        }
+    }
+
+    if (watched == textEdit)
+    {
+        if (event->type() == QEvent::FocusIn)
+        {
+            textEdit->setPlainText(textEdit->toMarkdown());
+        }
+        else if (event->type() == QEvent::FocusOut)
+        {
+            textEdit->setMarkdown(textEdit->toPlainText());
         }
     }
 
