@@ -1,5 +1,6 @@
 #include "StickerWrapper.h"
 #include <qbitmap.h>
+#include <qdebug.h>
 #include <qgraphicsview.h>
 #include <qguiapplication_platform.h>
 #include <qmainwindow.h>
@@ -32,10 +33,10 @@ StickerWrapper::StickerWrapper(QWidget* parent)
     dragging = false;
     angle = 0;
     
-    setAttribute(Qt::WA_DeleteOnClose); //Enforce deletion
+    // setAttribute(Qt::WA_DeleteOnClose); //Enforce deletion
     setAttribute(Qt::WA_TranslucentBackground);
     #ifdef Q_OS_LINUX
-    setWindowFlags(Qt::FramelessWindowHint | Qt::Window);
+    setWindowFlags(Qt::FramelessWindowHint);
     #else
     setWindowFlags(Qt::FramelessWindowHint | Qt::Tool);
     #endif
@@ -63,7 +64,10 @@ StickerWrapper::StickerWrapper(QWidget* parent)
     
     #ifdef Q_OS_LINUX
     setupNative();
+    qDebug() << Qt::hex << window()->winId();
     #endif
+
+    move(-100, 0);
 }
 
 #ifdef Q_OS_LINUX
@@ -146,7 +150,7 @@ void StickerWrapper::updateMask()
 
 void StickerWrapper::mouseMoveEvent(QMouseEvent *event)
 {
-    
+    // qDebug() << window()->geometry() << window()->frameGeometry();
     if ((event->buttons() & Qt::LeftButton) && dragging)
     {
         QPointF current = event->globalPosition();
