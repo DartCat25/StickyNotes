@@ -25,6 +25,7 @@ protected:
 private:
     void rotate(float angle);
     void updateMask();
+    void setupNative();
 
     Sticker* sticker;
 

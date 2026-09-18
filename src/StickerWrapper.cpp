@@ -1,14 +1,19 @@
 #include "StickerWrapper.h"
 #include <qbitmap.h>
 #include <qgraphicsview.h>
+#include <qguiapplication_platform.h>
 #include <qmainwindow.h>
 #include <qnamespace.h>
 #include <QGraphicsProxyWidget>
+#include <QGuiApplication>
 #include <qpainter.h>
 #include <qpoint.h>
 #include <qpolygon.h>
 #include <QWindow>
 #include <qtransform.h>
+
+#include <X11/Xlib.h>
+#include <X11/Xatom.h>
 
 #define WIDTH 412
 #define HEIGHT 412
@@ -27,7 +32,7 @@ StickerWrapper::StickerWrapper(QWidget* parent)
     
     setAttribute(Qt::WA_DeleteOnClose); //Enforce deletion
     setAttribute(Qt::WA_TranslucentBackground);
-    setWindowFlags(Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint);
+    setWindowFlags(Qt::FramelessWindowHint | Qt::Window);
     setMouseTracking(true);
     resize(WIDTH, HEIGHT);
     
@@ -38,7 +43,7 @@ StickerWrapper::StickerWrapper(QWidget* parent)
     setRenderHint(QPainter::SmoothPixmapTransform);
     
     setScene(scene);
-
+    
     sticker = new Sticker(this);
     proxy = scene->addWidget(sticker);
     sticker->move(0, 0);
@@ -48,6 +53,37 @@ StickerWrapper::StickerWrapper(QWidget* parent)
 
     proxy->setPos(WIDTH/2 - sticker->width()/2, HEIGHT/2 - sticker->height()/2);
     updateMask();
+    show();
+    setupNative();
+}
+
+void StickerWrapper::setupNative()
+{
+    QNativeInterface::QX11Application *x11App = qApp->nativeInterface<QNativeInterface::QX11Application>();
+    if (x11App) {
+        Display *display = x11App->display();
+        Window wId = this->winId();
+
+        Atom wmState = XInternAtom(display, "_NET_WM_STATE", False);
+        Atom skipTaskbar = XInternAtom(display, "_NET_WM_STATE_SKIP_TASKBAR", False);
+
+        if (wmState != None && skipTaskbar != None) {
+            XEvent xev;
+            memset(&xev, 0, sizeof(xev));
+            xev.type = ClientMessage;
+            xev.xclient.window = wId;
+            xev.xclient.message_type = wmState;
+            xev.xclient.format = 32;
+            xev.xclient.data.l[0] = 1; // 1 = _NET_WM_STATE_ADD (add flag)
+            xev.xclient.data.l[1] = skipTaskbar;
+            xev.xclient.data.l[2] = 0;
+            xev.xclient.data.l[3] = 1;
+
+            XSendEvent(display, DefaultRootWindow(display), False,
+                    SubstructureRedirectMask | SubstructureNotifyMask, &xev);
+            XFlush(display);
+        }
+    }
 }
 
 StickerWrapper::~StickerWrapper()
