@@ -9,7 +9,6 @@ set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTORCC ON)
 
 find_package(Qt6 REQUIRED COMPONENTS Core Gui Widgets Quick)
-find_package(X11 REQUIRED)
 
 # Define your source files
 file(GLOB_RECURSE SOURCES "src/*.cpp")
@@ -25,6 +24,9 @@ Qt6::Core
 Qt6::Gui 
 Qt6::Widgets 
 Qt6::Quick
-X11::X11
 )
 
+if(LINUX)
+    find_package(X11 REQUIRED)
+    target_link_libraries(StickyNotes PRIVATE X11::X11)
+endif()

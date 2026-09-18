@@ -5,15 +5,17 @@
 #include <qmainwindow.h>
 #include <qnamespace.h>
 #include <QGraphicsProxyWidget>
-#include <QGuiApplication>
 #include <qpainter.h>
 #include <qpoint.h>
 #include <qpolygon.h>
 #include <QWindow>
 #include <qtransform.h>
 
+#ifdef Q_OS_LINUX
+#include <QGuiApplication>
 #include <X11/Xlib.h>
 #include <X11/Xatom.h>
+#endif
 
 #define WIDTH 412
 #define HEIGHT 412
@@ -32,7 +34,11 @@ StickerWrapper::StickerWrapper(QWidget* parent)
     
     setAttribute(Qt::WA_DeleteOnClose); //Enforce deletion
     setAttribute(Qt::WA_TranslucentBackground);
+        #ifdef Q_OS_LINUX
     setWindowFlags(Qt::FramelessWindowHint | Qt::Window);
+    #else
+    setWindowFlags(Qt::FramelessWindowHint | Qt::Tool);
+    #endif
     setMouseTracking(true);
     resize(WIDTH, HEIGHT);
     
@@ -54,9 +60,14 @@ StickerWrapper::StickerWrapper(QWidget* parent)
     proxy->setPos(WIDTH/2 - sticker->width()/2, HEIGHT/2 - sticker->height()/2);
     updateMask();
     show();
+    
+    #ifdef Q_OS_LINUX
     setupNative();
+    #endif
 }
 
+#ifdef Q_OS_LINUX
+//Native X11 way to remove sticker from taskbar
 void StickerWrapper::setupNative()
 {
     QNativeInterface::QX11Application *x11App = qApp->nativeInterface<QNativeInterface::QX11Application>();
@@ -85,6 +96,7 @@ void StickerWrapper::setupNative()
         }
     }
 }
+#endif
 
 StickerWrapper::~StickerWrapper()
 {
