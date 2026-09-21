@@ -26,6 +26,7 @@ private:
     void rotate(float angle);
     void updateMask();
     #ifdef Q_OS_LINUX
+    void moveRaw(QPoint point);
     void setupNative();
     #endif
 
