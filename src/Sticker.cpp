@@ -266,16 +266,18 @@ void Sticker::contextMenuEvent(QContextMenuEvent *event) {
 // // Getters and setters
 void Sticker::setBackgroundColor(QColor color)
 {
-    int h = 0, s = 0, v = 0;
-    color.getHsv(&h, &s, &v);
+    int h = 0, s = 0, l = 0;
+    color.getHsl(&h, &s, &l);
 
-    QColor headerColor = QColor::fromHsv(
+    QColor headerColor = QColor::fromHsl(
         h,
         std::min(s + 20, 255),
-        std::max(v - 10, 0));
+        std::max(l - 10, 0));
 
-    setStyleSheet("background: " + color.name() + ";");
-    header->setStyleSheet("background: " + headerColor.name() + "");
+    QString penColor = l > 127 ? "black" : "white";
+
+    setStyleSheet("background: " + color.name() + "; color: " + penColor + ";");
+    header->setStyleSheet("background: " + headerColor.name() + "; color: " + penColor + ";");
 
     backgroundColor = color;
 }
