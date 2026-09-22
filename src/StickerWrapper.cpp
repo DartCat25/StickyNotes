@@ -14,6 +14,7 @@
 #include <qpolygon.h>
 #include <QWindow>
 #include <qtransform.h>
+#include <qwidget.h>
 #include <xcb/xproto.h>
 
 #ifdef Q_OS_LINUX
@@ -32,11 +33,12 @@
 
 // // Constructor / Destructor
 
-StickerWrapper::StickerWrapper(StackPos pos)
-: QGraphicsView()
+StickerWrapper::StickerWrapper(bool isCloner, StackPos pos, QWidget* parent)
+: QGraphicsView(parent)
 {
     dragging = false;
     angle = 0;
+    this->isCloner = isCloner; 
     
     setAttribute(Qt::WA_DeleteOnClose); //Enforce deletion
     setAttribute(Qt::WA_TranslucentBackground);
@@ -109,6 +111,13 @@ void StickerWrapper::startDragging(QPointF start)
     QPointF center = QPointF(WIDTH/2.0, HEIGHT/2.0);
     pivot = rotInvert.map(start - pos() - center) + center;
     dragging = true;
+
+    if (isCloner)
+    {
+        StickerWrapper* newSticker = new StickerWrapper(true);
+        newSticker->moveRaw(pos());
+        isCloner = false;
+    }
 }
 
 void StickerWrapper::endDragging()

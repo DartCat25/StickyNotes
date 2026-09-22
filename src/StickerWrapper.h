@@ -17,7 +17,10 @@ enum StackPos {
 class StickerWrapper : public QGraphicsView
 {
 public:
-    StickerWrapper(StackPos pos = StackPos::SP_TOP);
+    StickerWrapper(
+        bool isCloner = false,
+        StackPos pos = StackPos::SP_FREE,
+        QWidget* parent = nullptr);
     ~StickerWrapper();
 
     void closeWindow();
@@ -27,6 +30,11 @@ public:
     
     void setStackPos(StackPos pos, bool reInit = true);
     StackPos getStackPos();
+    void updateMask();
+
+    #ifdef Q_OS_LINUX
+    void moveRaw(QPoint point);
+    #endif
 protected:
     void mouseMoveEvent(QMouseEvent *event) override;
 
@@ -35,15 +43,12 @@ private:
     void recreateWindow();
     
     #ifdef Q_OS_LINUX
-    void moveRaw(QPoint point);
     void setupNative();
     #endif
 
     void rotate(float angle);
-    void updateMask();
 
     Sticker* sticker;
-
     
     QGraphicsScene* scene;
     QGraphicsProxyWidget* proxy;
@@ -54,4 +59,6 @@ private:
     
     double angle;
     StackPos stackPos;
+
+    bool isCloner;
 };

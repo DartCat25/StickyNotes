@@ -37,8 +37,6 @@ private:
     void header_pressed(QMouseEvent* event);
     void header_released(QMouseEvent* event);
 
-
-    QLineEdit* nameEdit;
     QFrame* header;
     QTextEdit* textEdit;
 

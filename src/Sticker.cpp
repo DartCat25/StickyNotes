@@ -35,9 +35,10 @@ Sticker::Sticker(StickerWrapper* parent) : QFrame()
     scalingSide = 0;
     
     setStyleSheet("background: #fef5c1;");
-
+    setObjectName("Sticker");
     setBaseSize(WIDTH, HEIGHT);
     resize(WIDTH, HEIGHT);
+
 
     QVBoxLayout* vbox = new QVBoxLayout(this);
     vbox->setContentsMargins(0, 0, 0, 0);
@@ -57,11 +58,9 @@ Sticker::Sticker(StickerWrapper* parent) : QFrame()
     
     QHBoxLayout* hbox = new QHBoxLayout(header);
 
-    QLineEdit* nameEdit = new QLineEdit("Noname");
-    nameEdit->setStyleSheet("border: none;");
-    nameEdit->setCursor(Qt::ArrowCursor);
+    QWidget* spacer = new QWidget();
 
-    hbox->addWidget(nameEdit, 1);
+    hbox->addWidget(spacer, 1);
 
     QPushButton* closeButton = new QPushButton("X");
     closeButton->setStyleSheet("border: none;");
@@ -188,6 +187,8 @@ void Sticker::mouseMoveEvent(QMouseEvent* event)
     if (scalingSide & ScalingSide::BOTTOM)
         resize(curSize.width(), curSize.height() + vec.y());
 
+    curPos = pos();
+    curSize = size();
 
     if (scalingSide & ScalingSide::LEFT)
     {
@@ -198,6 +199,7 @@ void Sticker::mouseMoveEvent(QMouseEvent* event)
         resize(curSize.width() + vec.x(), curSize.height());
 
     lastMousePos = current;
+    wrapper->updateMask();
 }
 
 void Sticker::mouseReleaseEvent(QMouseEvent* event)
@@ -258,7 +260,7 @@ void Sticker::contextMenuEvent(QContextMenuEvent *event) {
         wrapper->setStackPos(SP_BOTTOM);
     if (selectedAction == setColor)
     {
-        QColor color = QColorDialog::getColor("#f7e9a2");
+        QColor color = QColorDialog::getColor("#fef5c1");
         setBackgroundColor(color);
     }
 }
@@ -269,14 +271,30 @@ void Sticker::setBackgroundColor(QColor color)
     int h = 0, s = 0, l = 0;
     color.getHsl(&h, &s, &l);
 
+    //Calculate lumninance
+    float r = 0, g = 0, b = 0;
+    color.getRgbF(&r, &g, &b);
+    r = std::pow(r, 2.2);
+    g = std::pow(g, 2.2);
+    b = std::pow(b, 2.2);
+    float L = 0.2126 * r + 0.7152 * g + 0.0722 * b;
+
     QColor headerColor = QColor::fromHsl(
         h,
-        std::min(s + 20, 255),
-        std::max(l - 10, 0));
+        std::max(int(s * 0.9), 0),
+        std::max(int(l * 0.9), 0));
 
-    QString penColor = l > 127 ? "black" : "white";
+    QColor borderColor = QColor::fromHsl(
+        int((h > 60 || h > 240 ? h + 10 : h - 10) + 360) % 360,
+        std::max(int(s), 0),
+        std::max(int(l * 0.8), 0));
 
-    setStyleSheet("background: " + color.name() + "; color: " + penColor + ";");
+    QString penColor = L > 0.179 ? "black" : "white";
+
+    setStyleSheet("QWidget {background: " + color.name()
+    + "; color: " + penColor
+    + ";} QWidget#Sticker {border: 2px solid " + borderColor.name() + ";}"
+    );
     header->setStyleSheet("background: " + headerColor.name() + "; color: " + penColor + ";");
 
     backgroundColor = color;
