@@ -33,15 +33,14 @@ protected:
 private:
     void initWindow();
     void recreateWindow();
-
-    void rotate(float angle);
-    void updateMask();
-   
+    
     #ifdef Q_OS_LINUX
     void moveRaw(QPoint point);
     void setupNative();
     #endif
 
+    void rotate(float angle);
+    void updateMask();
 
     Sticker* sticker;
 

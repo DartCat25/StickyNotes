@@ -1,5 +1,6 @@
 #include "Sticker.h"
 #include "StickerWrapper.h"
+#include <qaction.h>
 #include <qapplication.h>
 #include <qboxlayout.h>
 #include <qcoreevent.h>
@@ -7,12 +8,14 @@
 #include <qevent.h>
 #include <qframe.h>
 #include <qlogging.h>
+#include <qmenu.h>
 #include <qnamespace.h>
 #include <qpushbutton.h>
 #include <QVBoxLayout>
 #include <qsizepolicy.h>
 #include <qwidget.h>
 #include <QMenu>
+#include <QColorDialog>
 
 #define WIDTH 300
 #define HEIGHT 300
@@ -223,10 +226,12 @@ void Sticker::contextMenuEvent(QContextMenuEvent *event) {
     QMenu menu(nullptr);
 
     
-    //Stacking
-    QAction *alOnTop    = menu.addAction("Set always on Top");
-    QAction *free       = menu.addAction("Set free stacking");
-    QAction *alOnBottom = menu.addAction("Set always on Bottom");
+    // // Stacking
+    QMenu* stacking = menu.addMenu("Stacking");
+
+    QAction *alOnTop    = stacking->addAction("Set always on Top");
+    QAction *free       = stacking->addAction("Set free stacking");
+    QAction *alOnBottom = stacking->addAction("Set always on Bottom");
     
     alOnTop->setCheckable(true);
     free->setCheckable(true);
@@ -238,6 +243,10 @@ void Sticker::contextMenuEvent(QContextMenuEvent *event) {
     free->setChecked(pos == SP_FREE);
     alOnBottom->setChecked(pos == SP_BOTTOM);
 
+
+    // // Setting color
+    QAction* setColor = menu.addAction("Set Color");
+
     // // Start
     QAction *selectedAction = menu.exec(event->globalPos());
 
@@ -247,4 +256,31 @@ void Sticker::contextMenuEvent(QContextMenuEvent *event) {
         wrapper->setStackPos(SP_FREE);
     if (selectedAction == alOnBottom)
         wrapper->setStackPos(SP_BOTTOM);
+    if (selectedAction == setColor)
+    {
+        QColor color = QColorDialog::getColor("#f7e9a2");
+        setBackgroundColor(color);
+    }
+}
+
+// // Getters and setters
+void Sticker::setBackgroundColor(QColor color)
+{
+    int h = 0, s = 0, v = 0;
+    color.getHsv(&h, &s, &v);
+
+    QColor headerColor = QColor::fromHsv(
+        h,
+        std::min(s + 20, 255),
+        std::max(v - 10, 0));
+
+    setStyleSheet("background: " + color.name() + ";");
+    header->setStyleSheet("background: " + headerColor.name() + "");
+
+    backgroundColor = color;
+}
+
+QColor Sticker::getBackgroundColor()
+{
+    return backgroundColor;
 }

@@ -22,6 +22,8 @@ public:
     Sticker(StickerWrapper* parent = nullptr);
     ~Sticker();
 
+    void setBackgroundColor(QColor color);
+    QColor getBackgroundColor();
 protected:
     bool eventFilter(QObject* watched, QEvent* event) override;
 
@@ -35,6 +37,7 @@ private:
     void header_pressed(QMouseEvent* event);
     void header_released(QMouseEvent* event);
 
+
     QLineEdit* nameEdit;
     QFrame* header;
     QTextEdit* textEdit;
@@ -43,4 +46,6 @@ private:
 
     uint32_t scalingSide;
     QPointF lastMousePos;
+
+    QColor backgroundColor;
 };

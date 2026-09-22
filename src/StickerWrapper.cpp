@@ -47,6 +47,7 @@ StickerWrapper::StickerWrapper(StackPos pos)
     #endif
     setMouseTracking(true);
     resize(WIDTH, HEIGHT);
+    setStyleSheet("background: transparent;");
 
     scene = new QGraphicsScene(this); 
     scene->setSceneRect(0, 0, WIDTH, HEIGHT);
