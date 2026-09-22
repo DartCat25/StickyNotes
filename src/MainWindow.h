@@ -1,5 +1,6 @@
 #pragma once
 
+#include "StickerWrapper.h"
 #include <QMainWindow>
 
 QT_BEGIN_NAMESPACE
@@ -16,7 +17,10 @@ public:
 
 private slots:
     void on_createStickerBtn_clicked();
+    void on_stackCombo_currentIndexChanged();
 
 private:
     Ui::MainWindow *ui;
+
+    StackPos stackPos;
 };

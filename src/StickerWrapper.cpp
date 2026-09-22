@@ -28,8 +28,8 @@
 
 // // Constructor / Destructor
 
-StickerWrapper::StickerWrapper(QWidget* parent)
-: QGraphicsView(parent)
+StickerWrapper::StickerWrapper(StackPos pos)
+: QGraphicsView()
 {
     dragging = false;
     angle = 0;
@@ -44,6 +44,8 @@ StickerWrapper::StickerWrapper(QWidget* parent)
     setMouseTracking(true);
     resize(WIDTH, HEIGHT);
     
+    setStackPos(pos);
+
     scene = new QGraphicsScene(this); 
     scene->setSceneRect(0, 0, WIDTH, HEIGHT);
     
@@ -94,6 +96,30 @@ void StickerWrapper::endDragging()
 {
     dragging = false;
 }
+
+// // Getters and setters
+
+void StickerWrapper::setStackPos(StackPos pos)
+{
+    switch (pos)
+    {
+    case SP_TOP:
+        setWindowFlag(Qt::WindowStaysOnTopHint, true);
+        setWindowFlag(Qt::WindowStaysOnBottomHint, false);
+        break;
+    case SP_FREE:
+        setWindowFlag(Qt::WindowStaysOnTopHint, false);
+        setWindowFlag(Qt::WindowStaysOnBottomHint, false);
+        break;
+    case SP_BOTTOM:
+        setWindowFlag(Qt::WindowStaysOnTopHint, false);
+        setWindowFlag(Qt::WindowStaysOnBottomHint, true);
+        break;
+    }
+    stackPos = pos;
+}
+
+StackPos StickerWrapper::getStackPos() {return stackPos;}
 
 // // Inner funcs
 

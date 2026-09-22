@@ -3,20 +3,57 @@
  <class>MainWindow</class>
  <widget class="QMainWindow" name="MainWindow">
   <property name="geometry">
-   <rect><x>0</x><y>0</y><width>400</width><height>300</height></rect>
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>400</width>
+    <height>298</height>
+   </rect>
   </property>
   <property name="windowTitle">
    <string>StickyNotes menu</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <widget class="QPushButton" name="createStickerBtn">
+   <widget class="QWidget" name="verticalLayoutWidget">
     <property name="geometry">
-     <rect><x>150</x><y>120</y><width>100</width><height>30</height></rect>
+     <rect>
+      <x>-10</x>
+      <y>-1</y>
+      <width>411</width>
+      <height>301</height>
+     </rect>
     </property>
-    <property name="text">
-     <string>Create</string>
-    </property>
+    <layout class="QVBoxLayout" name="verticalLayout">
+     <item>
+      <widget class="QComboBox" name="stackCombo">
+       <property name="editable">
+        <bool>false</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="createStickerBtn">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="baseSize">
+        <size>
+         <width>200</width>
+         <height>0</height>
+        </size>
+       </property>
+       <property name="text">
+        <string>Create</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
    </widget>
   </widget>
  </widget>
+ <resources/>
+ <connections/>
 </ui>
