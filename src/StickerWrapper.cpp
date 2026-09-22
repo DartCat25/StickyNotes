@@ -1,8 +1,11 @@
 #include "StickerWrapper.h"
 #include <qbitmap.h>
+#include <qcoreevent.h>
 #include <qdebug.h>
+#include <qevent.h>
 #include <qgraphicsview.h>
 #include <qguiapplication_platform.h>
+#include <qlogging.h>
 #include <qmainwindow.h>
 #include <qnamespace.h>
 #include <QGraphicsProxyWidget>
@@ -11,6 +14,7 @@
 #include <qpolygon.h>
 #include <QWindow>
 #include <qtransform.h>
+#include <xcb/xproto.h>
 
 #ifdef Q_OS_LINUX
 #include <QGuiApplication>
@@ -43,8 +47,6 @@ StickerWrapper::StickerWrapper(StackPos pos)
     #endif
     setMouseTracking(true);
     resize(WIDTH, HEIGHT);
-    
-    setStackPos(pos);
 
     scene = new QGraphicsScene(this); 
     scene->setSceneRect(0, 0, WIDTH, HEIGHT);
@@ -58,20 +60,36 @@ StickerWrapper::StickerWrapper(StackPos pos)
     proxy = scene->addWidget(sticker);
     sticker->move(0, 0);
 
+    sticker->installEventFilter(this);
+
     proxy->setTransformOriginPoint(sticker->rect().center());
     proxy->setRotation(angle);
 
     proxy->setPos(WIDTH/2 - sticker->width()/2, HEIGHT/2 - sticker->height()/2);
-    updateMask();
+
+    setStackPos(pos, false);
+    initWindow();
+}
+
+StickerWrapper::~StickerWrapper()
+{
+}
+
+void StickerWrapper::initWindow()
+{
     show();
-    
+    updateMask();
     #ifdef Q_OS_LINUX
     setupNative();
     #endif
 }
 
-StickerWrapper::~StickerWrapper()
+void StickerWrapper::recreateWindow()
 {
+    hide();
+    destroy(true, true);
+    createWinId();
+    initWindow();
 }
 
 // // External Events
@@ -99,7 +117,7 @@ void StickerWrapper::endDragging()
 
 // // Getters and setters
 
-void StickerWrapper::setStackPos(StackPos pos)
+void StickerWrapper::setStackPos(StackPos pos, bool reInit)
 {
     switch (pos)
     {
@@ -117,6 +135,9 @@ void StickerWrapper::setStackPos(StackPos pos)
         break;
     }
     stackPos = pos;
+
+    if (reInit)
+        recreateWindow();
 }
 
 StackPos StickerWrapper::getStackPos() {return stackPos;}

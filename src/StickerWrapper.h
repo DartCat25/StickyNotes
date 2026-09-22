@@ -25,12 +25,15 @@ public:
     void startDragging(QPointF start);
     void endDragging();
     
-    void setStackPos(StackPos pos);
+    void setStackPos(StackPos pos, bool reInit = true);
     StackPos getStackPos();
 protected:
     void mouseMoveEvent(QMouseEvent *event) override;
 
 private:
+    void initWindow();
+    void recreateWindow();
+
     void rotate(float angle);
     void updateMask();
    

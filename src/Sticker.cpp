@@ -12,6 +12,7 @@
 #include <QVBoxLayout>
 #include <qsizepolicy.h>
 #include <qwidget.h>
+#include <QMenu>
 
 #define WIDTH 300
 #define HEIGHT 300
@@ -215,4 +216,35 @@ void Sticker::header_pressed(QMouseEvent* event)
 void Sticker::header_released(QMouseEvent* event)
 {
     wrapper->endDragging();
+}
+
+//Context menu
+void Sticker::contextMenuEvent(QContextMenuEvent *event) {
+    QMenu menu(nullptr);
+
+    
+    //Stacking
+    QAction *alOnTop    = menu.addAction("Set always on Top");
+    QAction *free       = menu.addAction("Set free stacking");
+    QAction *alOnBottom = menu.addAction("Set always on Bottom");
+    
+    alOnTop->setCheckable(true);
+    free->setCheckable(true);
+    alOnBottom->setCheckable(true);
+
+    StackPos pos = wrapper->getStackPos();
+
+    alOnTop->setChecked(pos == SP_TOP);
+    free->setChecked(pos == SP_FREE);
+    alOnBottom->setChecked(pos == SP_BOTTOM);
+
+    // // Start
+    QAction *selectedAction = menu.exec(event->globalPos());
+
+    if (selectedAction == alOnTop)
+        wrapper->setStackPos(SP_TOP);
+    if (selectedAction == free)
+        wrapper->setStackPos(SP_FREE);
+    if (selectedAction == alOnBottom)
+        wrapper->setStackPos(SP_BOTTOM);
 }

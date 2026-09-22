@@ -29,6 +29,7 @@ private:
     void mousePressEvent(QMouseEvent* event) override;
     void mouseMoveEvent(QMouseEvent* event) override;
     void mouseReleaseEvent(QMouseEvent* event) override;
+    void contextMenuEvent(QContextMenuEvent *event) override;
 
     void closeButton_clicked();
     void header_pressed(QMouseEvent* event);
