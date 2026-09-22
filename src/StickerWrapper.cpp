@@ -34,7 +34,7 @@ StickerWrapper::StickerWrapper(QWidget* parent)
     dragging = false;
     angle = 0;
     
-    // setAttribute(Qt::WA_DeleteOnClose); //Enforce deletion
+    setAttribute(Qt::WA_DeleteOnClose); //Enforce deletion
     setAttribute(Qt::WA_TranslucentBackground);
     #ifdef Q_OS_LINUX
     setWindowFlags(Qt::FramelessWindowHint | Qt::Window);
@@ -65,7 +65,6 @@ StickerWrapper::StickerWrapper(QWidget* parent)
     
     #ifdef Q_OS_LINUX
     setupNative();
-    qDebug() << Qt::hex << window()->winId();
     #endif
 }
 
@@ -213,7 +212,11 @@ void StickerWrapper::mouseMoveEvent(QMouseEvent *event)
         
         curPos = current - rotateTransf.map(pivot - center) - center;
         
+        #ifdef  Q_OS_LINUX
         moveRaw(curPos.toPoint());
+        #else
+        move(curPos.toPoint());
+        #endif
         rotate(newAngle);
         lastMousePos = current;
         event->accept();
