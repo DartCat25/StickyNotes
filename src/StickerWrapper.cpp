@@ -39,6 +39,7 @@ StickerWrapper::StickerWrapper(uint32_t id, bool isCloner, StackPos pos, QWidget
     dragging = false;
     angle = 0;
     this->id = id;
+    next = nullptr;
     this->isCloner = isCloner; 
     
     setAttribute(Qt::WA_DeleteOnClose); //Enforce deletion
@@ -77,6 +78,7 @@ StickerWrapper::StickerWrapper(uint32_t id, bool isCloner, StackPos pos, QWidget
 
 StickerWrapper::~StickerWrapper()
 {
+    delete next;
 }
 
 void StickerWrapper::initWindow()
