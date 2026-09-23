@@ -16,7 +16,7 @@ int main(int argc, char *argv[])
 
     QPoint startPoint = QPoint( screenSize.width() - 400, screenSize.height() - 100);
 
-    StickerWrapper* first = new StickerWrapper(true);
+    StickerWrapper* first = new StickerWrapper(0, true);
     #ifdef Q_OS_LINUX
     first->moveRaw(startPoint);
     #else

@@ -18,6 +18,7 @@ class StickerWrapper : public QGraphicsView
 {
 public:
     StickerWrapper(
+        uint32_t id,
         bool isCloner = false,
         StackPos pos = StackPos::SP_FREE,
         QWidget* parent = nullptr);
@@ -34,6 +35,8 @@ public:
     void moveRaw(QPoint point);
     #endif
     
+    uint32_t getId() {return id;}
+
     void setStackPos(StackPos pos, bool reInit = true);
     StackPos getStackPos();
     
@@ -71,4 +74,5 @@ private:
     StackPos stackPos;
 
     bool isCloner;
+    uint32_t id;
 };

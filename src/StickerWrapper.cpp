@@ -33,11 +33,12 @@
 
 // // Constructor / Destructor
 
-StickerWrapper::StickerWrapper(bool isCloner, StackPos pos, QWidget* parent)
+StickerWrapper::StickerWrapper(uint32_t id, bool isCloner, StackPos pos, QWidget* parent)
 : QGraphicsView(parent)
 {
     dragging = false;
     angle = 0;
+    this->id = id;
     this->isCloner = isCloner; 
     
     setAttribute(Qt::WA_DeleteOnClose); //Enforce deletion
@@ -114,7 +115,7 @@ void StickerWrapper::startDragging(QPointF start)
 
     if (isCloner)
     {
-        StickerWrapper* newSticker = new StickerWrapper(true);
+        StickerWrapper* newSticker = new StickerWrapper(0, true);
         newSticker->moveRaw(pos());
         isCloner = false;
     }
