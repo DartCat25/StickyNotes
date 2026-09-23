@@ -34,11 +34,9 @@ Sticker::Sticker(StickerWrapper* parent) : QFrame()
     wrapper = parent;
     scalingSide = 0;
     
-    setStyleSheet("background: #fef5c1;");
     setObjectName("Sticker");
     setBaseSize(WIDTH, HEIGHT);
     resize(WIDTH, HEIGHT);
-
 
     QVBoxLayout* vbox = new QVBoxLayout(this);
     vbox->setContentsMargins(0, 0, 0, 0);
@@ -46,7 +44,6 @@ Sticker::Sticker(StickerWrapper* parent) : QFrame()
     // // Header
     
     header = new QFrame();
-    header->setStyleSheet("background: #f7e9a2;");
     header->setFixedHeight(HEADER_HEIGHT);
     header->setSizePolicy(QSizePolicy(
         QSizePolicy::Expanding,
@@ -80,11 +77,13 @@ Sticker::Sticker(StickerWrapper* parent) : QFrame()
 
     textEdit = new QTextEdit();
     textEdit->setSizePolicy(expand);
-    textEdit->setStyleSheet("border: none;");
+    textEdit->setStyleSheet("border: none; font-size:12pt;");
     textEdit->setMinimumSize(0, 0);
     textEdit->installEventFilter(this);
 
     vbox->addWidget(textEdit, 1);
+
+    setBackgroundColor("#fef5c1");
 }
 
 Sticker::~Sticker()
@@ -285,9 +284,9 @@ void Sticker::setBackgroundColor(QColor color)
         std::max(int(l * 0.9), 0));
 
     QColor borderColor = QColor::fromHsl(
-        int((h > 60 || h > 240 ? h + 10 : h - 10) + 360) % 360,
-        std::max(int(s), 0),
-        std::max(int(l * 0.8), 0));
+        h,
+        std::min(int(s * 1.2f), 255),
+        std::max(int(l * 0.8f), 0));
 
     QString penColor = L > 0.179 ? "black" : "white";
 
