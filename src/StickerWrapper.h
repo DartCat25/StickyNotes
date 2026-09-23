@@ -48,6 +48,9 @@ public:
 
     void setText(QString text);
     QString getText();
+
+    void setNext(StickerWrapper* next) {this->next = next;}
+    StickerWrapper* getNext() {return next;}
 protected:
     void mouseMoveEvent(QMouseEvent *event) override;
 
@@ -62,10 +65,11 @@ private:
     void rotate(float angle);
 
     Sticker* sticker;
-    
     QGraphicsScene* scene;
     QGraphicsProxyWidget* proxy;
     
+    StickerWrapper* next;
+
     QPointF lastMousePos;
     QPointF pivot;
     bool dragging;
