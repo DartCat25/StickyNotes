@@ -149,8 +149,17 @@ void StickerWrapper::setStackPos(StackPos pos, bool reInit)
     if (reInit)
         recreateWindow();
 }
-
 StackPos StickerWrapper::getStackPos() {return stackPos;}
+
+void StickerWrapper::setAngle(float angle) { rotate(angle); }
+float StickerWrapper::getAngle() { return angle; }
+
+//Proxy functions
+void StickerWrapper::setBackgroundColor(QColor color) {return sticker->setBackgroundColor(color);}
+QColor StickerWrapper::getBackgroundColor() {return sticker->getBackgroundColor();}
+
+void StickerWrapper::setText(QString text) {return sticker->setText(text);}
+QString StickerWrapper::getText() {return sticker->getText();}
 
 // // Inner funcs
 

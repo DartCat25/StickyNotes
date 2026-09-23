@@ -28,13 +28,23 @@ public:
     void startDragging(QPointF start);
     void endDragging();
     
-    void setStackPos(StackPos pos, bool reInit = true);
-    StackPos getStackPos();
     void updateMask();
 
     #ifdef Q_OS_LINUX
     void moveRaw(QPoint point);
     #endif
+    
+    void setStackPos(StackPos pos, bool reInit = true);
+    StackPos getStackPos();
+    
+    void setAngle(float angle);
+    float getAngle();
+
+    void setBackgroundColor(QColor color);
+    QColor getBackgroundColor();
+
+    void setText(QString text);
+    QString getText();
 protected:
     void mouseMoveEvent(QMouseEvent *event) override;
 

@@ -13,6 +13,7 @@
 #include <qpushbutton.h>
 #include <QVBoxLayout>
 #include <qsizepolicy.h>
+#include <qtextedit.h>
 #include <qwidget.h>
 #include <QMenu>
 #include <QColorDialog>
@@ -302,4 +303,14 @@ void Sticker::setBackgroundColor(QColor color)
 QColor Sticker::getBackgroundColor()
 {
     return backgroundColor;
+}
+
+void Sticker::setText(QString text)
+{
+    textEdit->setMarkdown(text);
+}
+
+QString Sticker::getText()
+{
+    return textEdit->toPlainText();
 }

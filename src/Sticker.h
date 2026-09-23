@@ -24,6 +24,9 @@ public:
 
     void setBackgroundColor(QColor color);
     QColor getBackgroundColor();
+
+    void setText(QString text);
+    QString getText();
 protected:
     bool eventFilter(QObject* watched, QEvent* event) override;
 
