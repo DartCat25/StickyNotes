@@ -77,7 +77,6 @@ StickerWrapper::StickerWrapper(uint32_t id, bool isCloner, StackPos pos, QWidget
 
 StickerWrapper::~StickerWrapper()
 {
-    delete next;
 }
 
 void StickerWrapper::initWindow()
