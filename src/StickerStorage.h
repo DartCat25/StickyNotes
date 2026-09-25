@@ -13,7 +13,5 @@ public:
     bool loadFile(std::string path);
     bool saveFile(std::string path);
 private:
-    StickerWrapper* first;
-    StickerWrapper* last;
     uint32_t lastId;
 };
