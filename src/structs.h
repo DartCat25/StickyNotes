@@ -1,4 +1,5 @@
 #pragma once
+#include "StickerWrapper.h"
 #include <cstdint>
 #include <qcolor.h>
 #include <string>
@@ -11,4 +12,5 @@ struct StickerData {
     uint32_t w, h;
     float rotation;
     uint32_t color;
+    StackPos stackPos;
 };
