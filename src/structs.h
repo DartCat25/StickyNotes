@@ -11,6 +11,6 @@ struct StickerData {
     uint32_t x, y;
     uint32_t w, h;
     float rotation;
-    uint32_t color;
+    QColor color;
     StackPos stackPos;
 };
