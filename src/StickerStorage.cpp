@@ -1,6 +1,5 @@
 #include "StickerStorage.h"
 #include "structs.h"
-#include <sstream>
 #include <string>
 #include <cstdio>
 
@@ -70,14 +69,4 @@ bool StickerStorage::load(std::string path)
 bool StickerStorage::save(std::string path)
 {
     return false;
-}
-
-std::string StickerStorage::serialize(StickerData* data)
-{
-
-}
-
-StickerData StickerStorage::deserialize(std::string text)
-{
-
 }

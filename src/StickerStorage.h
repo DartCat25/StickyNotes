@@ -15,9 +15,6 @@ private:
     bool load(std::string path);
     bool save(std::string path);
 
-    std::string serialize(StickerData* data);
-    StickerData deserialize(std::string text);
-
     uint32_t lastId;
     std::vector<StickerData>stickers;
 };
