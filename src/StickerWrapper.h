@@ -7,12 +7,7 @@
 #include <qgraphicsscene.h>
 #include <qinputmethod.h>
 #include <qmainwindow.h>
-
-enum StackPos {
-    SP_TOP,
-    SP_FREE,
-    SP_BOTTOM
-};
+#include "structs.h"
 
 class StickerWrapper : public QGraphicsView
 {

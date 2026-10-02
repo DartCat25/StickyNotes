@@ -1,8 +1,13 @@
 #pragma once
-#include "StickerWrapper.h"
 #include <cstdint>
 #include <qcolor.h>
 #include <string>
+
+enum StackPos {
+    SP_TOP,
+    SP_FREE,
+    SP_BOTTOM
+};
 
 struct StickerData {
     uint32_t id;

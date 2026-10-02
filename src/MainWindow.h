@@ -1,6 +1,6 @@
 #pragma once
 
-#include "StickerWrapper.h"
+#include "structs.h"
 #include <QMainWindow>
 
 QT_BEGIN_NAMESPACE
