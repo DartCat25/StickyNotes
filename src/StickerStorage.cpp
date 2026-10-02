@@ -91,12 +91,13 @@ std::vector<StickerData>* StickerStorage::loadDir(std::string path)
 
 StickerData StickerStorage::load(std::string path)
 {
-    std::ifstream input_stream(path);
-    if (input_stream.bad())
+    std::ifstream stream(path);
+    if (stream.bad())
         return {.id = -1U, .name = "No file exists: " + path};
 
     std::stringstream text;
-    text << input_stream.rdbuf();
+    text << stream.rdbuf();
+    stream.close();
 
     StickerData data = FileSerializer::deserialize(text.str());
     if (data.id == -1U) //Catch error messages
@@ -109,7 +110,16 @@ StickerData StickerStorage::load(std::string path)
     return data;
 }
 
-bool StickerStorage::save(std::string path)
+bool StickerStorage::save(std::string path, StickerData& data)
 {
-    return false;
+    std::ofstream stream(path);
+
+    if (stream.bad())
+        return false;
+
+    stream << FileSerializer::serialize(&data);
+
+    stream.close();
+
+    return true;
 }
