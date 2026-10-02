@@ -1,11 +1,18 @@
 #include "StickerStorage.h"
+#include "FileSerializer.h"
 #include "structs.h"
+#include <qdebug.h>
+#include <qlogging.h>
+#include <sstream>
 #include <string>
 #include <cstdio>
+#include <filesystem>
+#include <fstream>
 
 StickerStorage::StickerStorage()
 {
     lastId = 0;
+    stickers = std::vector<StickerData>();
 }
 
 StickerStorage::~StickerStorage()
@@ -61,9 +68,45 @@ StickerData* StickerStorage::getSticker(uint32_t id)
     return {};
 }
 
-bool StickerStorage::load(std::string path)
+std::vector<StickerData>* StickerStorage::loadDir(std::string path)
 {
-    return false;
+    StickerData data;
+    for (const std::filesystem::directory_entry& entry
+        : std::filesystem::recursive_directory_iterator(path))
+    {
+        if (!entry.is_regular_file())
+            continue;
+
+        data = load(entry.path());
+
+        if (data.id == -1U)
+        {
+            qDebug() << data.name;
+            continue;
+        }
+            
+        stickers.push_back(data);
+    }
+}
+
+StickerData StickerStorage::load(std::string path)
+{
+    std::ifstream input_stream(path);
+    if (input_stream.bad())
+        return {.id = -1U, .name = "No file exists: " + path};
+
+    std::stringstream text;
+    text << input_stream.rdbuf();
+
+    StickerData data = FileSerializer::deserialize(text.str());
+    if (data.id == -1U) //Catch error messages
+    {
+        return data;
+    }
+
+    data.id = lastId++;
+
+    return data;
 }
 
 bool StickerStorage::save(std::string path)
