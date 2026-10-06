@@ -9,10 +9,11 @@
 #include <filesystem>
 #include <fstream>
 
-StickerStorage::StickerStorage()
+StickerStorage::StickerStorage(std::string path)
 {
     lastId = 0;
     stickers = std::vector<StickerData>();
+    this->path = path;
 }
 
 StickerStorage::~StickerStorage()
@@ -68,7 +69,7 @@ StickerData* StickerStorage::getSticker(uint32_t id)
     return {};
 }
 
-std::vector<StickerData>* StickerStorage::loadDir(std::string path)
+std::vector<StickerData> StickerStorage::loadDir(std::string path)
 {
     StickerData data;
     for (const std::filesystem::directory_entry& entry
@@ -79,7 +80,7 @@ std::vector<StickerData>* StickerStorage::loadDir(std::string path)
 
         data = load(entry.path());
 
-        if (data.id == -1U)
+        if (data.id == -1U) //Show error
         {
             qDebug() << data.name;
             continue;
@@ -87,6 +88,8 @@ std::vector<StickerData>* StickerStorage::loadDir(std::string path)
             
         stickers.push_back(data);
     }
+
+    return stickers;
 }
 
 StickerData StickerStorage::load(std::string path)
@@ -110,14 +113,14 @@ StickerData StickerStorage::load(std::string path)
     return data;
 }
 
-bool StickerStorage::save(std::string path, StickerData& data)
+bool StickerStorage::save(std::string path, StickerData* data)
 {
     std::ofstream stream(path);
 
     if (stream.bad())
         return false;
 
-    stream << FileSerializer::serialize(&data);
+    stream << FileSerializer::serialize(data);
 
     stream.close();
 
