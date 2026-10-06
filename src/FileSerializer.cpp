@@ -63,7 +63,7 @@ int getNextInt(std::string& value, size_t& pos)
 
 float getNextFloat(std::string& value, size_t& pos)
 {
-    int result = INT32_MAX;
+    float result = MAXFLOAT;
     
     size_t i = pos;
     bool foundDigit = false;
@@ -78,7 +78,7 @@ float getNextFloat(std::string& value, size_t& pos)
             foundDigit = true;
             digitPos = i;
         }
-        else if (foundDigit && !isdigit(value[i]) && value[i] != '.')
+        else if (foundDigit && !isdigit(value[i]))
         {
             if (!foundDot && value[i] == '.')
                 foundDot = true;
