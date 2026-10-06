@@ -117,9 +117,9 @@ StickerData FileSerializer::deserialize(std::string text)
         return data;
     }
 
-    size_t cursor = headStart + 5;
+    size_t cursor = headStart + 4;
     size_t nextCursor = text.find(':', cursor);
-    while (nextCursor == -1 || nextCursor > headEnd)
+    while (nextCursor != -1 && nextCursor < headEnd)
     {
         StickerDataName dataName = getName(text.substr(cursor, nextCursor-cursor));
         cursor = nextCursor+1;
@@ -135,22 +135,22 @@ StickerData FileSerializer::deserialize(std::string text)
         break;
         case SDN_POSITION:
         {
-            size_t cursor = 0;
-            data.x = getNextInt(dataValue, cursor);
-            data.y = getNextInt(dataValue, cursor);
+            size_t dataCursor = 0;
+            data.x = getNextInt(dataValue, dataCursor);
+            data.y = getNextInt(dataValue, dataCursor);
         }
         break;
         case SDN_SIZE:
         {
-            size_t cursor = 0;
-            data.w = getNextInt(dataValue, cursor);
-            data.h = getNextInt(dataValue, cursor);
+            size_t dataCursor = 0;
+            data.w = getNextInt(dataValue, dataCursor);
+            data.h = getNextInt(dataValue, dataCursor);
         }
         break;
         case SDN_ROTATION:
         {
-            size_t cursor = 0;
-            data.rotation = getNextFloat(dataValue, cursor);
+            size_t dataCursor = 0;
+            data.rotation = getNextFloat(dataValue, dataCursor);
         }
         break;
         case SDN_COLOR:
@@ -160,8 +160,8 @@ StickerData FileSerializer::deserialize(std::string text)
         break;
         case SDN_STACK:
         {
-            size_t cursor = 0;
-            data.x = getNextInt(dataValue, cursor);
+            size_t dataCursor = 0;
+            data.x = getNextInt(dataValue, dataCursor);
         }
         break;
         case SDN_UNKNOWN: default:
@@ -169,7 +169,7 @@ StickerData FileSerializer::deserialize(std::string text)
         }
 
         cursor = nextCursor + 1;
-        nextCursor = text.find(':');
+        nextCursor = text.find(':', cursor);
     }
 
     return data;
