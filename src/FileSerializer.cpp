@@ -180,6 +180,8 @@ StickerData FileSerializer::deserialize(std::string text)
         nextCursor = text.find(':', cursor);
     }
 
+    data.text = text.substr(headEnd+4, text.size() - (headEnd+4));
+
     return data;
 }
 
