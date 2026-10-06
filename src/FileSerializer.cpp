@@ -94,6 +94,13 @@ float getNextFloat(std::string& value, size_t& pos)
     return result;
 }
 
+const char* ws = " \t\n\r\f\v ";
+inline std::string& dataTrim(std::string& str, const char* t = ws)
+{
+    str.erase(0, str.find_first_not_of(t));
+    return str;
+}
+
 /// Error if id = -1
 ///
 /// Error message is in name
@@ -125,6 +132,7 @@ StickerData FileSerializer::deserialize(std::string text)
         cursor = nextCursor+1;
         nextCursor = text.find('\n', cursor);
         std::string dataValue = text.substr(cursor, nextCursor-cursor);
+        dataTrim(dataValue);
 
         switch (dataName)
         {
