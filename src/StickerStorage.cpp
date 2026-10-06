@@ -39,6 +39,24 @@ bool StickerStorage::removeSticker(uint32_t id)
     return true;
 }
 
+void StickerStorage::changeStickerTransform(
+        uint32_t id,
+        int32_t x, int32_t y,
+        uint32_t h, uint32_t w,
+        float rotation)
+{
+    StickerData* data = getSticker(id);
+
+    if (!data)
+        return;
+
+    data->x = x; data->y = y;
+    data->w = w; data->h = h;
+    data->rotation = rotation;
+
+    save(path + "/" + data->name, data);
+}
+
 StickerData* StickerStorage::getSticker(uint32_t id)
 {
     if (!stickers.size())
