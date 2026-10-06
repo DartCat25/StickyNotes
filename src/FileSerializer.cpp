@@ -186,11 +186,11 @@ std::string FileSerializer::serialize(StickerData* data)
     << "position: " << data->x << " " << data->y << "\n"
     << "size: " << data->w << " " << data->h << "\n"
     << "rotation: " << data->rotation << "\n"
-    << "color: " << data->color.name().data() << "\n"
+    << "color: " << data->color.name().toStdString() << "\n"
     << "stack: " << data->stackPos << "\n"
     << "+++\n"
     //Body
-    << data->name;
+    << data->text;
 
     return strStr.str();
 }
