@@ -43,7 +43,7 @@ int getNextInt(std::string& value, size_t& pos)
 
     for (; i < value.size(); ++i)
     {
-        if (!foundDigit && isdigit(value[i]))
+        if (!foundDigit && (isdigit(value[i]) || value[i] == '-'))
         {
             foundDigit = true;
             digitPos = i;
@@ -73,7 +73,7 @@ float getNextFloat(std::string& value, size_t& pos)
 
     for (; i < value.size(); ++i)
     {
-        if (!foundDigit && isdigit(value[i]))
+        if (!foundDigit && (isdigit(value[i]) || value[i] == '-'))
         {
             foundDigit = true;
             digitPos = i;
