@@ -25,7 +25,7 @@ enum StickerDataName {
 
 StickerDataName getName(std::string name)
 {
-    for (int i = 0; i < SDN_UNKNOWN-1; ++i)
+    for (int i = 0; i < SDN_UNKNOWN; ++i)
     {
         if (name == dataNames[i])
             return (StickerDataName)i;
@@ -80,7 +80,7 @@ float getNextFloat(std::string& value, size_t& pos)
         }
         else if (foundDigit && !isdigit(value[i]))
         {
-            if (!foundDot && value[i] == '.')
+            if (!foundDot && (value[i] == '.' || value[i] == ','))
                 foundDot = true;
             else
                 break;
