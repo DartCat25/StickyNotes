@@ -77,7 +77,7 @@ StickerData* StickerStorage::getSticker(uint32_t id)
         if (stickers[element].id == id)
             return &stickers[element];
 
-        if (stickers[element].id < id)
+        if (stickers[element].id > id)
             max = element;
         else
             min = element;
