@@ -19,8 +19,10 @@ public:
 private:
     StickerData* getSticker(uint32_t id);
 
-    StickerData load(std::string path);
-    bool save(std::string path, StickerData* data);
+    void save(StickerData* sticker);
+
+    StickerData loadFile(std::string path);
+    bool saveFile(std::string path, StickerData* data);
 
     uint32_t lastId;
     std::vector<StickerData> stickers;

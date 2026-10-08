@@ -54,7 +54,7 @@ void StickerStorage::changeStickerTransform(
     data->w = w; data->h = h;
     data->rotation = rotation;
 
-    save(path + "/" + data->name, data);
+    save(data);
 }
 
 StickerData* StickerStorage::getSticker(uint32_t id)
@@ -96,7 +96,7 @@ std::vector<StickerData> StickerStorage::loadDir(std::string path)
         if (!entry.is_regular_file())
             continue;
 
-        data = load(entry.path());
+        data = loadFile(entry.path());
 
         if (data.id == -1U) //Show error
         {
@@ -110,7 +110,12 @@ std::vector<StickerData> StickerStorage::loadDir(std::string path)
     return stickers;
 }
 
-StickerData StickerStorage::load(std::string path)
+void StickerStorage::save(StickerData* sticker)
+{
+
+}
+
+StickerData StickerStorage::loadFile(std::string path)
 {
     std::ifstream stream(path);
     if (stream.bad())
@@ -131,7 +136,7 @@ StickerData StickerStorage::load(std::string path)
     return data;
 }
 
-bool StickerStorage::save(std::string path, StickerData* data)
+bool StickerStorage::saveFile(std::string path, StickerData* data)
 {
     std::ofstream stream(path);
 
