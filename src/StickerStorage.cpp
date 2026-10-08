@@ -149,3 +149,13 @@ bool StickerStorage::saveFile(std::string path, StickerData* data)
 
     return true;
 }
+
+std::string StickerStorage::getFileName(StickerData* data)
+{
+    return path + "/" + data->name + ".stk";
+}
+
+std::string StickerStorage::generateName(StickerData* data)
+{
+    return "sticker" + std::to_string(data->id);
+}

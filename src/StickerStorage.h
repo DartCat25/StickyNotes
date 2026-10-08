@@ -24,6 +24,9 @@ private:
     StickerData loadFile(std::string path);
     bool saveFile(std::string path, StickerData* data);
 
+    std::string getFileName(StickerData* data);
+    std::string generateName(StickerData* data);
+
     uint32_t lastId;
     std::vector<StickerData> stickers;
     std::string path;
