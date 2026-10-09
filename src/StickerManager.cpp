@@ -2,7 +2,7 @@
 
 StickerManager::StickerManager()
 {
-    storage = new StickerStorage();
+    storage = new StickerStorage("");
 }
 
 StickerManager::~StickerManager()
