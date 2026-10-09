@@ -13,10 +13,12 @@ StickerEdit::~StickerEdit()
 void StickerEdit::focusInEvent(QFocusEvent* e)
 {
     setPlainText(innerText);
+    QTextEdit::focusInEvent(e);
 }
 
 void StickerEdit::focusOutEvent(QFocusEvent* e)
 {
     innerText = toPlainText();
     setMarkdown(innerText);
+    QTextEdit::focusOutEvent(e);
 }
