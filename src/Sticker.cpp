@@ -1,5 +1,6 @@
 #include "Sticker.h"
 #include "StickerWrapper.h"
+#include "StickerEdit.h"
 #include <qaction.h>
 #include <qapplication.h>
 #include <qboxlayout.h>
@@ -76,7 +77,7 @@ Sticker::Sticker(StickerWrapper* parent) : QFrame()
         QSizePolicy::Expanding,
         QSizePolicy::Expanding);
 
-    textEdit = new QTextEdit();
+    textEdit = new StickerEdit();
     textEdit->setSizePolicy(expand);
     textEdit->setStyleSheet("border: none; font-size:12pt;");
     textEdit->setMinimumSize(0, 0);
@@ -118,18 +119,6 @@ bool Sticker::eventFilter(QObject* watched, QEvent* event)
             setFocus();
             event->accept();
             return true;
-        }
-    }
-
-    if (watched == textEdit)
-    {
-        if (event->type() == QEvent::FocusIn)
-        {
-            textEdit->setPlainText(textEdit->toMarkdown());
-        }
-        else if (event->type() == QEvent::FocusOut)
-        {
-            textEdit->setMarkdown(textEdit->toPlainText());
         }
     }
 
