@@ -10,10 +10,12 @@ public:
 
     QString getInnerText() {return innerText;}
     void setInnerText(QString text);
-    
+
 protected:
     void focusInEvent(QFocusEvent *e) override;
     void focusOutEvent(QFocusEvent *e) override;
+
+    void contextMenuEvent(QContextMenuEvent *e) override;
 
 private:
     QString innerText;
