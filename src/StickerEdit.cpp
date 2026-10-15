@@ -20,6 +20,7 @@ void StickerEdit::focusInEvent(QFocusEvent* e)
 
 void StickerEdit::focusOutEvent(QFocusEvent* e)
 {
+    innerText = toPlainText();
     setMarkdown(innerText);
     isFocused = false;
     QTextEdit::focusOutEvent(e);
