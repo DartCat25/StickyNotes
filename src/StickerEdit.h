@@ -8,10 +8,14 @@ public:
     StickerEdit(QWidget* parent = nullptr);
     ~StickerEdit();
 
+    QString getInnerText() {return innerText;}
+    void setInnerText(QString text);
+    
 protected:
     void focusInEvent(QFocusEvent *e) override;
     void focusOutEvent(QFocusEvent *e) override;
 
 private:
     QString innerText;
+    bool isFocused;
 };

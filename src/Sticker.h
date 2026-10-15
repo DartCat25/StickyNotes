@@ -5,9 +5,7 @@ class StickerWrapper;
 #include <qframe.h>
 #include <qtmetamacros.h>
 #include <qwidget.h>
-#include <QLineEdit>
-#include <QTextEdit>
-#include <qtextedit.h>
+#include "StickerEdit.h"
 
 enum ScalingSide {
     LEFT = 1,
@@ -41,7 +39,7 @@ private:
     void header_released(QMouseEvent* event);
 
     QFrame* header;
-    QTextEdit* textEdit;
+    StickerEdit* textEdit;
 
     StickerWrapper* wrapper;
 

@@ -1,6 +1,5 @@
 #include "Sticker.h"
 #include "StickerWrapper.h"
-#include "StickerEdit.h"
 #include <qaction.h>
 #include <qapplication.h>
 #include <qboxlayout.h>
@@ -296,10 +295,10 @@ QColor Sticker::getBackgroundColor()
 
 void Sticker::setText(QString text)
 {
-    textEdit->setMarkdown(text);
+    textEdit->setInnerText(text);
 }
 
 QString Sticker::getText()
 {
-    return textEdit->toPlainText();
+    return textEdit->getInnerText();
 }
