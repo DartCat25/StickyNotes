@@ -17,6 +17,7 @@
 #include <qwidget.h>
 #include <QMenu>
 #include <QColorDialog>
+#include <QTimer>
 
 #define WIDTH 300
 #define HEIGHT 300
@@ -130,6 +131,7 @@ bool Sticker::eventFilter(QObject* watched, QEvent* event)
         else if (event->type() == QEvent::FocusOut)
         {
             textEdit->setMarkdown(textEdit->toPlainText());
+            QTimer::singleShot(0, wrapper, &StickerWrapper::notifyTextChanged);
         }
     }
 
@@ -204,7 +206,13 @@ void Sticker::mouseMoveEvent(QMouseEvent* event)
 
 void Sticker::mouseReleaseEvent(QMouseEvent* event)
 {
+    bool wasScaling = scalingSide != 0;
+
     scalingSide = 0;
+
+    if (wasScaling)
+        wrapper->notifyTransformChanged();
+
     QFrame::mouseReleaseEvent(event);
 }
 
@@ -261,7 +269,7 @@ void Sticker::contextMenuEvent(QContextMenuEvent *event) {
     if (selectedAction == setColor)
     {
         QColor color = QColorDialog::getColor("#fef5c1");
-        setBackgroundColor(color);
+        wrapper->setBackgroundColor(color);
     }
 }
 

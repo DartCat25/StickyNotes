@@ -11,13 +11,22 @@
 
 class StickerWrapper : public QGraphicsView
 {
+    Q_OBJECT
+
 public:
     StickerWrapper(
         uint32_t id,
         bool isCloner = false,
         StackPos pos = StackPos::SP_FREE,
         QWidget* parent = nullptr);
+    StickerWrapper(
+        uint32_t id,
+        const StickerData* data,
+        QWidget* parent = nullptr);
     ~StickerWrapper();
+
+    void applyData(const StickerData* data);
+    StickerData getData();
 
     void closeWindow();
 
@@ -31,6 +40,7 @@ public:
     #endif
     
     uint32_t getId() {return id;}
+    void setId(uint32_t id) {this->id = id;}
 
     void setStackPos(StackPos pos, bool reInit = true);
     StackPos getStackPos();
@@ -38,11 +48,29 @@ public:
     void setAngle(float angle);
     float getAngle();
 
+    void setSize(uint32_t w, uint32_t h);
+
     void setBackgroundColor(QColor color);
     QColor getBackgroundColor();
 
     void setText(QString text);
     QString getText();
+
+    QPoint getDragStartPos() {return dragStartPos;}
+
+    void notifyTransformChanged();
+    void notifyTextChanged();
+
+signals:
+    void transformChanged(
+        int32_t x, int32_t y,
+        uint32_t w, uint32_t h,
+        float rotation);
+    void textChanged(QString text);
+    void colorChanged(QColor color);
+    void stackPosChanged(StackPos pos);
+    void dragFinished();
+    void closeRequested();
 
 protected:
     void mouseMoveEvent(QMouseEvent *event) override;
@@ -63,6 +91,7 @@ private:
 
     QPointF lastMousePos;
     QPointF pivot;
+    QPoint dragStartPos;
     bool dragging;
     
     double angle;

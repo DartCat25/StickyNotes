@@ -38,6 +38,7 @@ StickerWrapper::StickerWrapper(uint32_t id, bool isCloner, StackPos pos, QWidget
 {
     dragging = false;
     angle = 0;
+    stackPos = SP_FREE;
     this->id = id;
     this->isCloner = isCloner; 
     
@@ -75,8 +76,50 @@ StickerWrapper::StickerWrapper(uint32_t id, bool isCloner, StackPos pos, QWidget
     initWindow();
 }
 
+StickerWrapper::StickerWrapper(uint32_t id, const StickerData* data, QWidget* parent)
+: StickerWrapper(id, false, data ? data->stackPos : SP_FREE, parent)
+{
+    if (data)
+        applyData(data);
+}
+
 StickerWrapper::~StickerWrapper()
 {
+}
+
+void StickerWrapper::applyData(const StickerData* data)
+{
+    if (!data)
+        return;
+
+    setStackPos(data->stackPos);
+    setSize(data->w, data->h);
+    setAngle(data->rotation);
+    setBackgroundColor(data->color);
+    setText(QString::fromStdString(data->text));
+
+    #ifdef Q_OS_LINUX
+    moveRaw(QPoint(data->x, data->y));
+    #else
+    move(data->x, data->y);
+    #endif
+}
+
+StickerData StickerWrapper::getData()
+{
+    StickerData data = {};
+
+    data.id = id;
+    data.x = pos().x();
+    data.y = pos().y();
+    data.w = sticker->width();
+    data.h = sticker->height();
+    data.rotation = angle;
+    data.color = getBackgroundColor();
+    data.text = getText().toStdString();
+    data.stackPos = stackPos;
+
+    return data;
 }
 
 void StickerWrapper::initWindow()
@@ -100,11 +143,13 @@ void StickerWrapper::recreateWindow()
 
 void StickerWrapper::closeWindow()
 {
+    emit closeRequested();
     close();
 }
 
 void StickerWrapper::startDragging(QPointF start)
 {
+    dragStartPos = pos();
     lastMousePos = start;
     QTransform rotInvert = QTransform();
     rotInvert.rotate(-angle);
@@ -124,12 +169,17 @@ void StickerWrapper::startDragging(QPointF start)
 void StickerWrapper::endDragging()
 {
     dragging = false;
+    notifyTransformChanged();
+    emit dragFinished();
 }
 
 // // Getters and setters
 
 void StickerWrapper::setStackPos(StackPos pos, bool reInit)
 {
+    if (pos == stackPos)
+        return;
+
     switch (pos)
     {
     case SP_TOP:
@@ -149,14 +199,27 @@ void StickerWrapper::setStackPos(StackPos pos, bool reInit)
 
     if (reInit)
         recreateWindow();
+
+    emit stackPosChanged(pos);
 }
 StackPos StickerWrapper::getStackPos() {return stackPos;}
 
 void StickerWrapper::setAngle(float angle) { rotate(angle); }
 float StickerWrapper::getAngle() { return angle; }
 
+void StickerWrapper::setSize(uint32_t w, uint32_t h)
+{
+    sticker->resize(w, h);
+    proxy->setTransformOriginPoint(sticker->rect().center());
+    updateMask();
+}
+
 //Proxy functions
-void StickerWrapper::setBackgroundColor(QColor color) {return sticker->setBackgroundColor(color);}
+void StickerWrapper::setBackgroundColor(QColor color)
+{
+    sticker->setBackgroundColor(color);
+    emit colorChanged(color);
+}
 QColor StickerWrapper::getBackgroundColor() {return sticker->getBackgroundColor();}
 
 void StickerWrapper::setText(QString text) {return sticker->setText(text);}
@@ -177,6 +240,19 @@ void StickerWrapper::updateMask()
     QRegion maskRegion(scenePath.toPolygon());
     
     setMask(maskRegion);
+}
+
+void StickerWrapper::notifyTransformChanged()
+{
+    emit transformChanged(
+        pos().x(), pos().y(),
+        sticker->width(), sticker->height(),
+        angle);
+}
+
+void StickerWrapper::notifyTextChanged()
+{
+    emit textChanged(getText());
 }
 
 #ifdef Q_OS_LINUX
