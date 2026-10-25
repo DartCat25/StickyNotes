@@ -223,11 +223,17 @@ void Sticker::closeButton_clicked()
 
 void Sticker::header_pressed(QMouseEvent* event)
 {
+    if (event->button() != Qt::LeftButton)
+        return;
+
     wrapper->startDragging(event->globalPosition());
 }
 
 void Sticker::header_released(QMouseEvent* event)
 {
+    if (event->button() != Qt::LeftButton)
+        return;
+
     wrapper->endDragging();
 }
 

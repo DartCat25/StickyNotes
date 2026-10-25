@@ -164,6 +164,9 @@ void StickerWrapper::startDragging(QPointF start)
 
 void StickerWrapper::endDragging()
 {
+    if (!dragging)
+        return;
+
     dragging = false;
     notifyTransformChanged();
 }
@@ -335,6 +338,13 @@ void StickerWrapper::setupNative()
 void StickerWrapper::mouseMoveEvent(QMouseEvent *event)
 {
     // qDebug() << window()->geometry() << window()->frameGeometry();
+    if (dragging && !(event->buttons() & Qt::LeftButton))
+    {
+        endDragging();
+        QGraphicsView::mouseMoveEvent(event);
+        return;
+    }
+
     if ((event->buttons() & Qt::LeftButton) && dragging)
     {
         QPointF current = event->globalPosition();
@@ -362,4 +372,12 @@ void StickerWrapper::mouseMoveEvent(QMouseEvent *event)
     }
 
     QGraphicsView::mouseMoveEvent(event);
+}
+
+void StickerWrapper::mouseReleaseEvent(QMouseEvent *event)
+{
+    if (dragging && event->button() == Qt::LeftButton)
+        endDragging();
+
+    QGraphicsView::mouseReleaseEvent(event);
 }

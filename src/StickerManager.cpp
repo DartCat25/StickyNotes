@@ -118,6 +118,8 @@ void StickerManager::createCloner(QPoint pos)
     #else
     cloner->move(pos);
     #endif
+
+    cloner->raise();
 }
 
 void StickerManager::materializeCloner(StickerWrapper* sticker)
