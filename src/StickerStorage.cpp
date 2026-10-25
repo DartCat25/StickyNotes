@@ -2,13 +2,13 @@
 #include "FileSerializer.h"
 #include "structs.h"
 #include <QStandardPaths>
-#include <qdebug.h>
-#include <qlogging.h>
-#include <sstream>
-#include <string>
-#include <cstdio>
+#include <cctype>
+#include <cstdint>
 #include <filesystem>
 #include <fstream>
+#include <qdebug.h>
+#include <sstream>
+#include <string>
 
 StickerStorage::StickerStorage(std::string path)
 {
@@ -36,6 +36,7 @@ void StickerStorage::setPath(std::string path)
     this->path = path;
     trashPath = path + "/trash";
     lastId = 0;
+    lastNameId = 0;
     stickers.clear();
 
     initDirs();
@@ -45,7 +46,9 @@ void StickerStorage::setPath(std::string path)
 uint32_t StickerStorage::createSticker(StickerData data)
 {
     data.id = lastId++;
+    data.name = generateName();
 
+    saveFile(getFileName(&data), &data);
     stickers.push_back(data);
 
     return data.id;
@@ -55,8 +58,29 @@ bool StickerStorage::removeSticker(uint32_t id)
 {
     StickerData* data = getSticker(id);
 
-    std::string path = data->name + ".stk";
-    int err = std::remove(path.c_str());
+    if (!data)
+        return false;
+
+    std::error_code error;
+    std::filesystem::rename(
+        getFileName(data),
+        trashPath + "/" + data->name + ".stk",
+        error);
+
+    if (error)
+    {
+        qDebug() << error.message().c_str();
+        return false;
+    }
+
+    for (size_t i = 0; i < stickers.size(); ++i)
+    {
+        if (stickers[i].id != id)
+            continue;
+
+        stickers.erase(stickers.begin() + i);
+        break;
+    }
 
     return true;
 }
@@ -115,90 +139,64 @@ void StickerStorage::setStickerStackPos(uint32_t id, StackPos pos)
     save(data);
 }
 
+const std::vector<StickerData>& StickerStorage::getStickers() const
+{
+    return stickers;
+}
+
 StickerData* StickerStorage::getSticker(uint32_t id)
 {
-    if (!stickers.size())
-        return {};
+    if (stickers.empty())
+        return nullptr;
 
     size_t min = 0;
-    size_t max = stickers.size()-1;
+    size_t max = stickers.size();
 
-    size_t element = max/2;
-    
-    uint32_t idMax = stickers[max].id;
-
-    if (idMax == id)
-        return &stickers[element];
-
-    while (max != element && min != element)
+    while (min < max)
     {
+        size_t element = (min + max) / 2;
+
         if (stickers[element].id == id)
             return &stickers[element];
 
-        if (stickers[element].id > id)
-            max = element;
+        if (stickers[element].id < id)
+            min = element + 1;
         else
-            min = element;
-        element = (min + max) / 2;
+            max = element;
     }
 
-    return {};
-}
-
-std::vector<StickerData> StickerStorage::loadDir(std::string path)
-{
-    StickerData data;
-    for (const std::filesystem::directory_entry& entry
-        : std::filesystem::recursive_directory_iterator(path))
-    {
-        if (!entry.is_regular_file())
-            continue;
-
-        data = loadFile(entry.path());
-
-        if (data.id == -1U) //Show error
-        {
-            qDebug() << data.name;
-            continue;
-        }
-            
-        stickers.push_back(data);
-    }
-
-    return stickers;
+    return nullptr;
 }
 
 void StickerStorage::save(StickerData* sticker)
 {
-
+    saveFile(getFileName(sticker), sticker);
 }
 
 StickerData StickerStorage::loadFile(std::string path)
 {
     std::ifstream stream(path);
-    if (stream.bad())
-        return {.id = -1U, .name = "No file exists: " + path};
+
+    if (!stream.is_open())
+    {
+        StickerData data = {};
+        data.id = -1U;
+        data.name = "No file exists: " + path;
+        return data;
+    }
 
     std::stringstream text;
     text << stream.rdbuf();
     stream.close();
 
-    StickerData data = FileSerializer::deserialize(text.str());
-    if (data.id == -1U) //Catch error messages
-    {
-        return data;
-    }
-
-    data.id = lastId++;
-
-    return data;
+    return FileSerializer::deserialize(text.str());
 }
 
 bool StickerStorage::saveFile(std::string path, StickerData* data)
 {
     std::ofstream stream(path);
 
-    if (stream.bad())
+    if (!stream.is_open())
         return false;
 
     stream << FileSerializer::serialize(data);
@@ -213,9 +211,68 @@ std::string StickerStorage::getFileName(StickerData* data)
     return path + "/" + data->name + ".stk";
 }
 
-std::string StickerStorage::generateName(StickerData* data)
+std::string StickerStorage::generateName()
 {
-    return "sticker" + std::to_string(data->id);
+    return "sticker" + std::to_string(lastNameId++);
+}
+
+void StickerStorage::loadDir(std::string path)
+{
+    std::error_code error;
+    std::filesystem::directory_iterator iterator(path, error);
+
+    if (error)
+    {
+        qDebug() << error.message().c_str();
+        return;
+    }
+
+    for (const std::filesystem::directory_entry& entry : iterator)
+    {
+        if (!entry.is_regular_file())
+            continue;
+
+        if (entry.path().extension() != ".stk")
+            continue;
+
+        StickerData data = loadFile(entry.path().string());
+
+        if (data.id == -1U)
+        {
+            qDebug() << data.name.c_str();
+            continue;
+        }
+
+        data.id = lastId++;
+        data.name = entry.path().stem().string();
+
+        updateLastNameId(data.name);
+        stickers.push_back(data);
+    }
+}
+
+void StickerStorage::updateLastNameId(std::string name)
+{
+    std::string prefix = "sticker";
+
+    if (name.size() <= prefix.size())
+        return;
+
+    if (name.compare(0, prefix.size(), prefix) != 0)
+        return;
+
+    std::string number = name.substr(prefix.size());
+
+    for (char symbol : number)
+    {
+        if (!isdigit(symbol))
+            return;
+    }
+
+    uint32_t value = std::stoul(number);
+
+    if (value >= lastNameId)
+        lastNameId = value + 1;
 }
 
 void StickerStorage::initDirs()

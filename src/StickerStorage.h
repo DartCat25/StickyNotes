@@ -1,6 +1,8 @@
 #pragma once
 
 #include "structs.h"
+#include <cstdint>
+#include <string>
 #include <vector>
 
 class StickerStorage {
@@ -24,7 +26,7 @@ public:
     void setStickerColor(uint32_t id, QColor color);
     void setStickerStackPos(uint32_t id, StackPos pos);
 
-    std::vector<StickerData> loadDir(std::string path);
+    const std::vector<StickerData>& getStickers() const;
 private:
     StickerData* getSticker(uint32_t id);
 
@@ -34,11 +36,14 @@ private:
     bool saveFile(std::string path, StickerData* data);
 
     std::string getFileName(StickerData* data);
-    std::string generateName(StickerData* data);
+    std::string generateName();
 
+    void loadDir(std::string path);
+    void updateLastNameId(std::string name);
     void initDirs();
 
     uint32_t lastId;
+    uint32_t lastNameId;
     std::vector<StickerData> stickers;
     std::string path;
     std::string trashPath;
