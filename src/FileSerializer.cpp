@@ -169,7 +169,7 @@ StickerData FileSerializer::deserialize(std::string text)
         case SDN_STACK:
         {
             size_t dataCursor = 0;
-            data.x = getNextInt(dataValue, dataCursor);
+            data.stackPos = (StackPos)getNextInt(dataValue, dataCursor);
         }
         break;
         case SDN_UNKNOWN: default:
