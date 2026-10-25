@@ -1,4 +1,5 @@
 #pragma once
+
 #include <qobject.h>
 #include <qtextedit.h>
 #include <qwidget.h>

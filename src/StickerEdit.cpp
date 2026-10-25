@@ -1,11 +1,11 @@
 #include "StickerEdit.h"
+#include "Sticker.h"
 #include <qaction.h>
 #include <qclipboard.h>
 #include <qevent.h>
 #include <qguiapplication.h>
 #include <qmenu.h>
 #include <qnamespace.h>
-#include <qtextedit.h>
 #include <qwindowdefs.h>
 #include <QClipboard>
 
@@ -30,6 +30,13 @@ void StickerEdit::focusOutEvent(QFocusEvent* e)
     innerText = toPlainText();
     setMarkdown(innerText);
     isFocused = false;
+
+    if (parent())
+    {
+        Sticker* sticker = (Sticker*)parent();
+
+        sticker->notifyTextChanged();
+    }
     QTextEdit::focusOutEvent(e);
 }
 

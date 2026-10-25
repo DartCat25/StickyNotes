@@ -18,6 +18,7 @@
 #include <QMenu>
 #include <QColorDialog>
 #include <QTimer>
+#include <string>
 
 #define WIDTH 300
 #define HEIGHT 300
@@ -94,6 +95,11 @@ Sticker::~Sticker()
 }
 
 // // External events
+
+void Sticker::notifyTextChanged()
+{
+    wrapper->notifyTextChanged();
+}
 
 bool Sticker::eventFilter(QObject* watched, QEvent* event)
 {
