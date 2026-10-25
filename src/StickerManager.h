@@ -31,4 +31,5 @@ private:
 
     StickerWrapper* cloner;
     StickerStorage* storage;
+    bool shuttingDown;
 };

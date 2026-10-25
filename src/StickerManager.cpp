@@ -4,6 +4,7 @@
 
 StickerManager::StickerManager()
 {
+    shuttingDown = false;
     storage = new StickerStorage();
     cloner = nullptr;
 
@@ -18,6 +19,7 @@ StickerManager::StickerManager()
 
 StickerManager::~StickerManager()
 {
+    shuttingDown = true;
     delete storage;
 }
 
@@ -78,11 +80,12 @@ void StickerManager::onCloseRequested()
 {
     StickerWrapper* sticker = qobject_cast<StickerWrapper*>(sender());
 
-    if (!sticker)
+    if (!sticker || shuttingDown)
         return;
 
     if (sticker == cloner)
     {
+        shuttingDown = true;
         qApp->quit();
         return;
     }
