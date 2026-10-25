@@ -20,7 +20,7 @@ MainWindow::~MainWindow()
 
 void MainWindow::on_createStickerBtn_clicked()
 {
-    StickerWrapper* stWrapper = new StickerWrapper(false, stackPos);
+    StickerWrapper* stWrapper = new StickerWrapper(0, stackPos);
     stWrapper->show();
 }
 
