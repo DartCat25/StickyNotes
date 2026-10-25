@@ -39,10 +39,10 @@ bool StickerStorage::removeSticker(uint32_t id)
     return true;
 }
 
-void StickerStorage::changeStickerTransform(
+void StickerStorage::setStickerTransform(
         uint32_t id,
         int32_t x, int32_t y,
-        uint32_t h, uint32_t w,
+        uint32_t w, uint32_t h,
         float rotation)
 {
     StickerData* data = getSticker(id);
@@ -53,6 +53,42 @@ void StickerStorage::changeStickerTransform(
     data->x = x; data->y = y;
     data->w = w; data->h = h;
     data->rotation = rotation;
+
+    save(data);
+}
+
+void StickerStorage::setStickerText(uint32_t id, std::string text)
+{
+    StickerData* data = getSticker(id);
+
+    if (!data)
+        return;
+
+    data->text = text;
+
+    save(data);
+}
+
+void StickerStorage::setStickerColor(uint32_t id, QColor color)
+{
+    StickerData* data = getSticker(id);
+
+    if (!data)
+        return;
+
+    data->color = color;
+
+    save(data);
+}
+
+void StickerStorage::setStickerStackPos(uint32_t id, StackPos pos)
+{
+    StickerData* data = getSticker(id);
+
+    if (!data)
+        return;
+
+    data->stackPos = pos;
 
     save(data);
 }
