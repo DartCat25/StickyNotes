@@ -26,3 +26,15 @@ Qt6::Widgets
 Qt6::Quick
 )
 
+if(LINUX)
+    find_package(X11 REQUIRED)
+    target_link_libraries(StickyNotes PRIVATE X11::X11)
+
+    find_package(PkgConfig REQUIRED)
+        pkg_check_modules(XCB REQUIRED IMPORTED_TARGET xcb)
+
+    target_link_libraries(StickyNotes PRIVATE
+        Qt6::Widgets
+        PkgConfig::XCB
+    )
+endif()
