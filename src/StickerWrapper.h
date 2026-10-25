@@ -16,7 +16,6 @@ class StickerWrapper : public QGraphicsView
 public:
     StickerWrapper(
         uint32_t id,
-        bool isCloner = false,
         StackPos pos = StackPos::SP_FREE,
         QWidget* parent = nullptr);
     StickerWrapper(
@@ -56,8 +55,6 @@ public:
     void setText(QString text);
     QString getText();
 
-    QPoint getDragStartPos() {return dragStartPos;}
-
     void notifyTransformChanged();
     void notifyTextChanged();
 
@@ -69,11 +66,11 @@ signals:
     void textChanged(QString text);
     void colorChanged(QColor color);
     void stackPosChanged(StackPos pos);
-    void dragFinished();
     void closeRequested();
 
 protected:
     void mouseMoveEvent(QMouseEvent *event) override;
+    void closeEvent(QCloseEvent* event) override;
 
 private:
     void initWindow();
@@ -91,12 +88,10 @@ private:
 
     QPointF lastMousePos;
     QPointF pivot;
-    QPoint dragStartPos;
     bool dragging;
     
     double angle;
     StackPos stackPos;
 
-    bool isCloner;
     uint32_t id;
 };

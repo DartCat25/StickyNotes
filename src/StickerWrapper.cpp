@@ -33,14 +33,13 @@
 
 // // Constructor / Destructor
 
-StickerWrapper::StickerWrapper(uint32_t id, bool isCloner, StackPos pos, QWidget* parent)
+StickerWrapper::StickerWrapper(uint32_t id, StackPos pos, QWidget* parent)
 : QGraphicsView(parent)
 {
     dragging = false;
     angle = 0;
     stackPos = SP_FREE;
     this->id = id;
-    this->isCloner = isCloner; 
     
     setAttribute(Qt::WA_DeleteOnClose); //Enforce deletion
     setAttribute(Qt::WA_TranslucentBackground);
@@ -77,7 +76,7 @@ StickerWrapper::StickerWrapper(uint32_t id, bool isCloner, StackPos pos, QWidget
 }
 
 StickerWrapper::StickerWrapper(uint32_t id, const StickerData* data, QWidget* parent)
-: StickerWrapper(id, false, data ? data->stackPos : SP_FREE, parent)
+: StickerWrapper(id, data ? data->stackPos : SP_FREE, parent)
 {
     if (data)
         applyData(data);
@@ -143,13 +142,17 @@ void StickerWrapper::recreateWindow()
 
 void StickerWrapper::closeWindow()
 {
-    emit closeRequested();
     close();
+}
+
+void StickerWrapper::closeEvent(QCloseEvent* event)
+{
+    emit closeRequested();
+    QGraphicsView::closeEvent(event);
 }
 
 void StickerWrapper::startDragging(QPointF start)
 {
-    dragStartPos = pos();
     lastMousePos = start;
     QTransform rotInvert = QTransform();
     rotInvert.rotate(-angle);
@@ -157,20 +160,12 @@ void StickerWrapper::startDragging(QPointF start)
     QPointF center = QPointF(WIDTH/2.0, HEIGHT/2.0);
     pivot = rotInvert.map(start - pos() - center) + center;
     dragging = true;
-
-    if (isCloner)
-    {
-        StickerWrapper* newSticker = new StickerWrapper(0, true);
-        newSticker->moveRaw(pos());
-        isCloner = false;
-    }
 }
 
 void StickerWrapper::endDragging()
 {
     dragging = false;
     notifyTransformChanged();
-    emit dragFinished();
 }
 
 // // Getters and setters
