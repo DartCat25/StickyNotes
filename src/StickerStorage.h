@@ -1,10 +1,15 @@
+#pragma once
+
 #include "structs.h"
 #include <vector>
 
 class StickerStorage {
 public:
-    StickerStorage(std::string path);
+    StickerStorage(std::string path = defaultPath());
     ~StickerStorage();
+
+    static std::string defaultPath();
+    void setPath(std::string path);
 
     uint32_t createSticker(StickerData data);
     bool removeSticker(uint32_t id);
@@ -31,7 +36,10 @@ private:
     std::string getFileName(StickerData* data);
     std::string generateName(StickerData* data);
 
+    void initDirs();
+
     uint32_t lastId;
     std::vector<StickerData> stickers;
     std::string path;
+    std::string trashPath;
 };

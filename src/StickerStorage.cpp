@@ -1,6 +1,7 @@
 #include "StickerStorage.h"
 #include "FileSerializer.h"
 #include "structs.h"
+#include <QStandardPaths>
 #include <qdebug.h>
 #include <qlogging.h>
 #include <sstream>
@@ -11,13 +12,34 @@
 
 StickerStorage::StickerStorage(std::string path)
 {
-    lastId = 0;
-    stickers = std::vector<StickerData>();
-    this->path = path;
+    setPath(path);
 }
 
 StickerStorage::~StickerStorage()
 {
+}
+
+std::string StickerStorage::defaultPath()
+{
+    QString base = QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation);
+    if (base.isEmpty())
+        return "stickers";
+
+    return (base + "/StickyNotes/stickers").toStdString();
+}
+
+void StickerStorage::setPath(std::string path)
+{
+    if (path.empty())
+        path = defaultPath();
+
+    this->path = path;
+    trashPath = path + "/trash";
+    lastId = 0;
+    stickers.clear();
+
+    initDirs();
+    loadDir(path);
 }
 
 uint32_t StickerStorage::createSticker(StickerData data)
@@ -194,4 +216,13 @@ std::string StickerStorage::getFileName(StickerData* data)
 std::string StickerStorage::generateName(StickerData* data)
 {
     return "sticker" + std::to_string(data->id);
+}
+
+void StickerStorage::initDirs()
+{
+    std::error_code error;
+    std::filesystem::create_directories(trashPath, error);
+
+    if (error)
+        qDebug() << error.message().c_str();
 }
