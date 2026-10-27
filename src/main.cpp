@@ -7,6 +7,7 @@ int main(int argc, char *argv[])
     setenv("QT_QPA_PLATFORM", "xcb", 1);
     #endif
     QApplication a(argc, argv);
+    a.setQuitOnLastWindowClosed(false);
 
     StickerManager manager;
 
