@@ -1,5 +1,6 @@
 #include "FileSerializer.h"
 #include <cctype>
+#include <cfloat>
 #include <cstdint>
 #include <cstdlib>
 #include <sstream>
@@ -63,7 +64,7 @@ int getNextInt(std::string& value, size_t& pos)
 
 float getNextFloat(std::string& value, size_t& pos)
 {
-    float result = MAXFLOAT;
+    float result = FLT_MAX;
     
     size_t i = pos;
     bool foundDigit = false;
