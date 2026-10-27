@@ -52,6 +52,9 @@ StickerWrapper::StickerWrapper(uint32_t id, StackPos pos, QWidget* parent)
     resize(WIDTH, HEIGHT);
     setStyleSheet("background: transparent;");
 
+    setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+
     scene = new QGraphicsScene(this); 
     scene->setSceneRect(0, 0, WIDTH, HEIGHT);
     
