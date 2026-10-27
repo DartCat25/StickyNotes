@@ -15,10 +15,10 @@
 #include <QWindow>
 #include <qtransform.h>
 #include <qwidget.h>
-#include <xcb/xproto.h>
 
 #ifdef Q_OS_LINUX
 #include <QGuiApplication>
+#include <xcb/xproto.h>
 #include <X11/Xlib.h>
 #include <X11/Xatom.h>
 #include <xcb/xcb.h>
