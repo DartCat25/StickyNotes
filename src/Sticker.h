@@ -7,12 +7,12 @@ class StickerWrapper;
 #include <qwidget.h>
 #include "StickerEdit.h"
 
-enum ScalingSide {
-    LEFT = 1,
-    RIGHT = 2,
-    TOP = 4,
-    BOTTOM = 8
-};
+// enum ScalingSide {
+//     LEFT = 1,
+//     RIGHT = 2,
+//     TOP = 4,
+//     BOTTOM = 8
+// };
 
 class Sticker : public QFrame
 {

@@ -35,7 +35,7 @@
 Sticker::Sticker(StickerWrapper* parent) : QFrame()
 {
     wrapper = parent;
-    scalingSide = 0;
+    // scalingSide = 0;
     
     setObjectName("Sticker");
     setBaseSize(WIDTH, HEIGHT);
@@ -135,76 +135,77 @@ bool Sticker::eventFilter(QObject* watched, QEvent* event)
 
 void Sticker::mousePressEvent(QMouseEvent* event)
 {
-    if (event->button() == Qt::LeftButton)
-    {
-        lastMousePos = event->position();
-        QPointF clickPos = event->position();
-        QSize sz = size();
+    // if (event->button() == Qt::LeftButton)
+    // {
+    //     lastMousePos = event->position();
+    //     QPointF clickPos = event->position();
+    //     QSize sz = size();
 
 
-        if (clickPos.x() < SIZE_MARGIN)
-            scalingSide |= ScalingSide::LEFT;
-        else if (clickPos.x() > sz.width() - SIZE_MARGIN)
-            scalingSide |= ScalingSide::RIGHT;
+    //     if (clickPos.x() < SIZE_MARGIN)
+    //         scalingSide |= ScalingSide::LEFT;
+    //     else if (clickPos.x() > sz.width() - SIZE_MARGIN)
+    //         scalingSide |= ScalingSide::RIGHT;
 
-        if (clickPos.y() < SIZE_MARGIN)
-            scalingSide |= ScalingSide::TOP;
-        else if (clickPos.y() > sz.width() - SIZE_MARGIN)
-            scalingSide |= ScalingSide::BOTTOM;
+    //     if (clickPos.y() < SIZE_MARGIN)
+    //         scalingSide |= ScalingSide::TOP;
+    //     else if (clickPos.y() > sz.height() - SIZE_MARGIN)
+    //         scalingSide |= ScalingSide::BOTTOM;
 
-        if (scalingSide)
-            return;
-    }
+    //     if (scalingSide)
+    //         return;
+    // }
 
     QFrame::mousePressEvent(event);
 }
 
 void Sticker::mouseMoveEvent(QMouseEvent* event)
 {
-    if (!scalingSide)
-    {
-        QFrame::mouseMoveEvent(event);
-        return;    
-    }
+    QFrame::mouseMoveEvent(event);
+    // if (!scalingSide)
+    // {
+    //     QFrame::mouseMoveEvent(event);
+    //     return;    
+    // }
 
-    QPointF current = event->position();
+    // QPointF current = event->position();
 
-    QPointF vec = current - lastMousePos;
+    // QPointF vec = current - lastMousePos;
 
-    QPointF curPos = pos();
-    QSize curSize = size();
+    // QPointF curPos = pos();
+    // QSize curSize = size();
 
-    if (scalingSide & ScalingSide::TOP)
-    {
-        move(curPos.x(), curPos.y() + vec.y());
-        resize(curSize.width(), curSize.height() - vec.y());
-    }
-    if (scalingSide & ScalingSide::BOTTOM)
-        resize(curSize.width(), curSize.height() + vec.y());
+    // if (scalingSide & ScalingSide::TOP)
+    // {
+    //     move(curPos.x(), curPos.y() + vec.y());
+    //     resize(curSize.width(), curSize.height() - vec.y());
+    // }
+    // if (scalingSide & ScalingSide::BOTTOM)
+    //     resize(curSize.width(), curSize.height() + vec.y());
 
-    curPos = pos();
-    curSize = size();
+    // curPos = pos();
+    // curSize = size();
 
-    if (scalingSide & ScalingSide::LEFT)
-    {
-        move(curPos.x() + vec.x(), curPos.y());
-        resize(curSize.width() - vec.x(), curSize.height());
-    }
-    if (scalingSide & ScalingSide::RIGHT)
-        resize(curSize.width() + vec.x(), curSize.height());
+    // if (scalingSide & ScalingSide::LEFT)
+    // {
+    //     move(curPos.x() + vec.x(), curPos.y());
+    //     resize(curSize.width() - vec.x(), curSize.height());
+    // }
+    // if (scalingSide & ScalingSide::RIGHT)
+    //     resize(curSize.width() + vec.x(), curSize.height());
 
-    lastMousePos = current;
-    wrapper->updateMask();
+    // lastMousePos = current;
+    // wrapper->updateMask();
 }
 
 void Sticker::mouseReleaseEvent(QMouseEvent* event)
 {
-    bool wasScaling = scalingSide != 0;
+    // bool wasScaling = scalingSide != 0;
 
-    scalingSide = 0;
+    // scalingSide = 0;
 
-    if (wasScaling)
-        wrapper->notifyTransformChanged();
+    // if (wasScaling)
+    //     wrapper->notifyTransformChanged();
 
     QFrame::mouseReleaseEvent(event);
 }
