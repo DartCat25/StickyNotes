@@ -50,7 +50,7 @@ StickerWrapper::StickerWrapper(uint32_t id, StackPos pos, QWidget* parent)
     #endif
     setMouseTracking(true);
     resize(WIDTH, HEIGHT);
-    setStyleSheet("background: transparent;");
+    setStyleSheet("background: transparent; border: none;");
 
     setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
@@ -127,7 +127,9 @@ StickerData StickerWrapper::getData()
 void StickerWrapper::initWindow()
 {
     show();
+    #ifdef Q_OS_LINUX
     updateMask();
+    #endif
     #ifdef Q_OS_LINUX
     setupNative();
     #endif
@@ -212,7 +214,9 @@ void StickerWrapper::setSize(uint32_t w, uint32_t h)
 {
     sticker->resize(w, h);
     proxy->setTransformOriginPoint(sticker->rect().center());
+    #ifdef Q_OS_LINUX
     updateMask();
+    #endif
 }
 
 //Proxy functions
@@ -232,9 +236,12 @@ void StickerWrapper::rotate(float angle)
 {
     proxy->setRotation(angle);
     this->angle = angle;
+    #ifdef Q_OS_LINUX
     updateMask();
+    #endif
 }
 
+#ifdef Q_OS_LINUX
 void StickerWrapper::updateMask()
 {
     QPolygonF scenePath = proxy->mapToScene(sticker->rect());   
@@ -242,6 +249,7 @@ void StickerWrapper::updateMask()
     
     setMask(maskRegion);
 }
+#endif
 
 void StickerWrapper::notifyTransformChanged()
 {

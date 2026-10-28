@@ -32,9 +32,8 @@ public:
     void startDragging(QPointF start);
     void endDragging();
     
-    void updateMask();
-
     #ifdef Q_OS_LINUX
+    void updateMask();
     void moveRaw(QPoint point);
     #endif
     
