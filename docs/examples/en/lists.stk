@@ -1,0 +1,16 @@
++++
+name: lists
+position: 1214 278
+size: 300 300
+rotation: 1.11983
+color: #fef5c1
+stack: 1
++++
+## Lists
+- Bullet (\-)
+* Circle (\*)
+  - Second level
+- [ ] Checkbox \- [ ]
+- [x] Checked checkbox \- [x]
+1. Numbered list with a dot
+2) List with a bracket

@@ -1,0 +1,21 @@
++++
+name: blocks
+position: 1290 358
+size: 300 300
+rotation: -1.47691
+color: #fef5c1
+stack: 1
++++
+Inline `code` insertion.
+```c
+//Multiline
+char* str = "Code block";
+```
+>Quote
+
+Link example [link](https://github.com/DartCat25/StickyNotes)
+
+|Table|Column|
+|----------|---|
+|Data|--|
+|Wow|--|

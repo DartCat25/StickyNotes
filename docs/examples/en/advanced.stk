@@ -1,0 +1,15 @@
++++
+name: advanced
+position: 1214 431
+size: 300 300
+rotation: -2.16192
+color: #fef5c1
+stack: 1
++++
+This is <sub>subscript</sub>  
+This is <sup>superscript</sup>  
+<!--This is hidden text that is not visible out of focus :)-->
+|Can|Do||Alignment|
+|:---|:---:|---:|
+|Left|Center|Right|
+|:--|:---:|---:|

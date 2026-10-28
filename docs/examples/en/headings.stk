@@ -1,0 +1,16 @@
++++
+name: headings
+position: 1304 510
+size: 300 300
+rotation: -1.13375
+color: #fef5c1
+stack: 1
++++
+# Heading
+## Smaller heading
+### Maximum 6 levels
+---
+↑Separator (---)  
+Two spaces at the end of a line = line break
+
+Two line breaks = paragraph
