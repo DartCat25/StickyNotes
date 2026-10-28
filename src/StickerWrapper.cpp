@@ -147,14 +147,14 @@ void StickerWrapper::recreateWindow()
 
 void StickerWrapper::closeWindow()
 {
+    emit closeRequested();
     close();
 }
 
-void StickerWrapper::closeEvent(QCloseEvent* event)
-{
-    emit closeRequested();
-    QGraphicsView::closeEvent(event);
-}
+// void StickerWrapper::closeEvent(QCloseEvent* event)
+// {
+//     QGraphicsView::closeEvent(event);
+// }
 
 void StickerWrapper::startDragging(QPointF start)
 {
