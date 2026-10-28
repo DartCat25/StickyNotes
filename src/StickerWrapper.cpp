@@ -15,6 +15,7 @@
 #include <QWindow>
 #include <qtransform.h>
 #include <qwidget.h>
+#include <cmath>
 
 #ifdef Q_OS_LINUX
 #include <QGuiApplication>
@@ -30,6 +31,7 @@
 #define MAX_ANGLE 30.0
 #define FORCE 0.1
 #define FADE 0.94
+// #define CENTER_MASS_GRAVITY
 
 // // Constructor / Destructor
 
@@ -362,10 +364,17 @@ void StickerWrapper::mouseMoveEvent(QMouseEvent *event)
         QPointF curPos = pos();
         QPointF vec = current - lastMousePos;
 
-        double newAngle = std::min(std::max(angle * FADE + vec.x() * FORCE, -MAX_ANGLE), MAX_ANGLE);
-        
         QPointF center = proxy->mapToScene(proxy->rect().center());
         
+        #ifdef CENTER_MASS_GRAVITY
+        const double RAD2DEG = 180.0 / 3.141592653589;
+        double centerAngle = std::atan2(center.x() - pivot.x(), center.y() - pivot.y()) * RAD2DEG;
+
+        double newAngle = std::min(std::max((angle - centerAngle) * FADE + centerAngle + vec.x() * FORCE, -MAX_ANGLE), MAX_ANGLE);
+        #else
+        double newAngle = std::min(std::max(angle * FADE + vec.x() * FORCE, -MAX_ANGLE), MAX_ANGLE);
+        #endif
+
         QTransform rotateTransf = QTransform();
         rotateTransf.rotate(newAngle);
         
