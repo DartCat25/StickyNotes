@@ -199,6 +199,35 @@ void StickerEdit::toggleCheckbox(QTextBlock block)
     }
 }
 
+// The markers are inserted next to the selection, the selected text itself is
+// left as it is; afterwards the same text is selected again.
+void StickerEdit::wrapSelection(const QString& marker)
+{
+    QTextCursor cursor = textCursor();
+
+    if (!cursor.hasSelection())
+        return;
+
+    int start = cursor.selectionStart();
+    int end = cursor.selectionEnd();
+    int offset = marker.size();
+
+    cursor.beginEditBlock();
+
+    cursor.setPosition(end);
+    cursor.insertText(marker);
+
+    cursor.setPosition(start);
+    cursor.insertText(marker);
+
+    cursor.setPosition(start + offset);
+    cursor.setPosition(end + offset, QTextCursor::KeepAnchor);
+
+    cursor.endEditBlock();
+
+    setTextCursor(cursor);
+}
+
 void StickerEdit::mousePressEvent(QMouseEvent* e)
 {
     linkPressed = false;
@@ -288,6 +317,34 @@ void StickerEdit::mouseDoubleClickEvent(QMouseEvent* e)
     }
 
     QTextEdit::mouseDoubleClickEvent(e);
+}
+
+void StickerEdit::keyPressEvent(QKeyEvent* e)
+{
+    if (e->modifiers() == Qt::ControlModifier)
+    {
+        // The keys are swallowed even without a selection, otherwise the text
+        // control would apply its own rich text formatting.
+        switch (e->key())
+        {
+            case Qt::Key_B:
+                wrapSelection("**");
+                e->accept();
+                return;
+
+            case Qt::Key_I:
+                wrapSelection("*");
+                e->accept();
+                return;
+
+            case Qt::Key_U:
+                wrapSelection("_");
+                e->accept();
+                return;
+        }
+    }
+
+    QTextEdit::keyPressEvent(e);
 }
 
 //Remove base event

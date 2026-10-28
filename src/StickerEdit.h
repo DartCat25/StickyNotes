@@ -22,12 +22,15 @@ protected:
     void mouseReleaseEvent(QMouseEvent *e) override;
     void mouseDoubleClickEvent(QMouseEvent *e) override;
 
+    void keyPressEvent(QKeyEvent *e) override;
+
     void contextMenuEvent(QContextMenuEvent *e) override;
 
 private:
     QTextBlock markerBlockAt(const QPointF& pos) const;
     int checkboxPosition(QTextBlock block) const;
     void toggleCheckbox(QTextBlock block);
+    void wrapSelection(const QString& marker);
 
     QString innerText;
     bool isFocused;
