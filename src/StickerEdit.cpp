@@ -3,6 +3,7 @@
 #include <qabstracttextdocumentlayout.h>
 #include <qaction.h>
 #include <qclipboard.h>
+#include <qdesktopservices.h>
 #include <qevent.h>
 #include <qguiapplication.h>
 #include <qmenu.h>
@@ -10,6 +11,7 @@
 #include <qscrollbar.h>
 #include <qtextcursor.h>
 #include <qtextdocument.h>
+#include <qurl.h>
 #include <qwindowdefs.h>
 #include <QClipboard>
 #include <QRegularExpression>
@@ -83,6 +85,7 @@ StickerEdit::StickerEdit(QWidget* parent) : QTextEdit(parent)
     innerText = "";
     isFocused = false;
     checkboxPressed = false;
+    linkPressed = false;
 
     // Clicks no longer take the focus by themselves, see mousePressEvent.
     setFocusPolicy(Qt::TabFocus);
@@ -198,8 +201,19 @@ void StickerEdit::toggleCheckbox(QTextBlock block)
 
 void StickerEdit::mousePressEvent(QMouseEvent* e)
 {
+    linkPressed = false;
+
     if (e->button() == Qt::LeftButton)
     {
+        // The link is followed on release, the press is only swallowed here so
+        // the editor does not take the focus.
+        if (!anchorAt(e->position().toPoint()).isEmpty())
+        {
+            linkPressed = true;
+            e->accept();
+            return;
+        }
+
         QTextBlock block = markerBlockAt(e->position());
 
         if (isCheckbox(block))
@@ -219,8 +233,38 @@ void StickerEdit::mousePressEvent(QMouseEvent* e)
     QTextEdit::mousePressEvent(e);
 }
 
+void StickerEdit::mouseMoveEvent(QMouseEvent* e)
+{
+    QTextEdit::mouseMoveEvent(e);
+
+    if (isFocused)
+        return;
+
+    // The links are opened by the editor itself, and the text control does not
+    // know about checkboxes, so the cursor shape is chosen here.
+    QPointF pos = e->position();
+
+    bool clickable = !anchorAt(pos.toPoint()).isEmpty()
+        || isCheckbox(markerBlockAt(pos));
+
+    viewport()->setCursor(clickable ? Qt::PointingHandCursor : Qt::IBeamCursor);
+}
+
 void StickerEdit::mouseReleaseEvent(QMouseEvent* e)
 {
+    if (linkPressed && e->button() == Qt::LeftButton)
+    {
+        linkPressed = false;
+
+        QString link = anchorAt(e->position().toPoint());
+
+        if (!link.isEmpty())
+            QDesktopServices::openUrl(QUrl(link));
+
+        e->accept();
+        return;
+    }
+
     // The text control toggles a checkbox on release, so the release of a
     // marker click is dropped as well or the marker is switched twice.
     if (checkboxPressed && e->button() == Qt::LeftButton)
@@ -235,7 +279,9 @@ void StickerEdit::mouseReleaseEvent(QMouseEvent* e)
 
 void StickerEdit::mouseDoubleClickEvent(QMouseEvent* e)
 {
-    if (e->button() == Qt::LeftButton && isCheckbox(markerBlockAt(e->position())))
+    if (e->button() == Qt::LeftButton
+        && (isCheckbox(markerBlockAt(e->position()))
+            || !anchorAt(e->position().toPoint()).isEmpty()))
     {
         e->accept();
         return;

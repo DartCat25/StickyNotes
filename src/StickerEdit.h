@@ -18,6 +18,7 @@ protected:
     void focusOutEvent(QFocusEvent *e) override;
 
     void mousePressEvent(QMouseEvent *e) override;
+    void mouseMoveEvent(QMouseEvent *e) override;
     void mouseReleaseEvent(QMouseEvent *e) override;
     void mouseDoubleClickEvent(QMouseEvent *e) override;
 
@@ -31,4 +32,5 @@ private:
     QString innerText;
     bool isFocused;
     bool checkboxPressed;
+    bool linkPressed;
 };
