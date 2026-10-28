@@ -12,7 +12,7 @@ A small desktop application for creating sticky notes on Linux. Notes can be mov
   <img src="media/creating-stickers.webp" alt="Creating and editing a sticky note" width="300">
   &nbsp;&nbsp;&nbsp;&nbsp;
   <img src="media/markdown.webp" alt="Using markdown" width="300"><br>
-  <sub>Creating and editing &nbsp;&nbsp;|&nbsp;&nbsp; Markdown</sub>
+  <sub>Creating &nbsp;&nbsp;|&nbsp;&nbsp; Markdown</sub>
 </p>
 
 <p align="center">
@@ -22,7 +22,9 @@ A small desktop application for creating sticky notes on Linux. Notes can be mov
   <sub>Stacking &nbsp;&nbsp;|&nbsp;&nbsp; Colors</sub>
 </p>
 
-## Installation
+# Installation
+
+## Linux
 
 ### Requirements
 
@@ -69,9 +71,9 @@ cmake --build build -j"$(nproc)"
 
 Sticker data is stored in `~/.local/share/StickyNotes/stickers`.
 
-# Windows
+## Windows
 
-## Requirements
+### Requirements
 
 - Windows 10 (1809 or later) or Windows 11, x64
 - Visual Studio 2022 Build Tools, workload **Desktop development with C++**
