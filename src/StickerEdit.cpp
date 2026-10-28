@@ -270,7 +270,7 @@ void StickerEdit::setInnerText(QString text)
     innerText = text;
     
     if (isFocused)
-        setMarkdown(innerText);
-    else
         setPlainText(innerText);
+    else
+        setMarkdown(innerText);
 }
