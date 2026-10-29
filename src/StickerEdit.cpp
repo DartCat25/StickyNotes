@@ -228,6 +228,34 @@ void StickerEdit::wrapSelection(const QString& marker)
     setTextCursor(cursor);
 }
 
+void StickerEdit::wrapSelection(const QString& markerLeft, const QString& markerRight)
+{
+    QTextCursor cursor = textCursor();
+
+    if (!cursor.hasSelection())
+        return;
+
+    int start = cursor.selectionStart();
+    int end = cursor.selectionEnd();
+    int offsetLeft = markerLeft.size();
+    int offsetRight = markerRight.size();
+
+    cursor.beginEditBlock();
+
+    cursor.setPosition(end);
+    cursor.insertText(markerRight);
+
+    cursor.setPosition(start);
+    cursor.insertText(markerLeft);
+
+    // cursor.setPosition(start + offsetLeft);
+    cursor.setPosition(end + offsetRight);
+
+    cursor.endEditBlock();
+
+    setTextCursor(cursor);
+}
+
 void StickerEdit::mousePressEvent(QMouseEvent* e)
 {
     linkPressed = false;
@@ -321,8 +349,30 @@ void StickerEdit::mouseDoubleClickEvent(QMouseEvent* e)
 
 void StickerEdit::keyPressEvent(QKeyEvent* e)
 {
-    if (e->modifiers() == Qt::ControlModifier)
+    if (e->modifiers() & Qt::ControlModifier)
     {
+        if (e->modifiers() & Qt::ShiftModifier)
+        {
+            switch (e->key())
+            {
+                case Qt::Key_X:
+                    wrapSelection("~");
+                    e->accept();
+                    return;
+                case Qt::Key_M:
+                    wrapSelection("`");
+                    e->accept();
+                    return;
+            }
+            if (e->text() == ".")
+            {
+                wrapSelection("> ", "");
+                e->accept();
+                return;
+            }
+        }
+
+
         // The keys are swallowed even without a selection, otherwise the text
         // control would apply its own rich text formatting.
         switch (e->key())
@@ -331,14 +381,16 @@ void StickerEdit::keyPressEvent(QKeyEvent* e)
                 wrapSelection("**");
                 e->accept();
                 return;
-
             case Qt::Key_I:
                 wrapSelection("*");
                 e->accept();
                 return;
-
             case Qt::Key_U:
                 wrapSelection("_");
+                e->accept();
+                return;
+            case Qt::Key_L:
+                wrapSelection("[", "]()");
                 e->accept();
                 return;
         }
