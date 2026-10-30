@@ -12,6 +12,7 @@
 #include <qpainter.h>
 #include <qpoint.h>
 #include <qpolygon.h>
+#include <QScreen>
 #include <QWindow>
 #include <qtransform.h>
 #include <qwidget.h>
@@ -276,6 +277,20 @@ void StickerWrapper::moveRaw(QPoint point)
     if (!x11App)
         return;
 
+    // Qt coordinates are device-independent, while the raw X11 request below
+    // expects native (physical) pixels. Convert at the boundary, otherwise
+    // dragging and restoring positions break on HiDPI/XWayland setups.
+    QWindow *win = windowHandle();
+    QScreen *screen = QGuiApplication::screenAt(point);
+
+    const qreal dpr = screen
+        ? screen->devicePixelRatio()
+        : (win ? win->devicePixelRatio() : 1.0);
+
+    const QPoint nativePoint(
+        qRound(point.x() * dpr),
+        qRound(point.y() * dpr));
+
     Display *display = x11App->display();
     Window window = winId();
 
@@ -301,8 +316,8 @@ void StickerWrapper::moveRaw(QPoint point)
         (1L << 9) |
         (1L << 12);
 
-    event.xclient.data.l[1] = point.x();
-    event.xclient.data.l[2] = point.y();
+    event.xclient.data.l[1] = nativePoint.x();
+    event.xclient.data.l[2] = nativePoint.y();
 
     XSendEvent(
         display,
