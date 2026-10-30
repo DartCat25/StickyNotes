@@ -175,6 +175,10 @@ void StickerWrapper::endDragging()
     if (!dragging)
         return;
 
+    #ifdef Q_OS_LINUX
+    updateMask();
+    #endif
+
     dragging = false;
     notifyTransformChanged();
 }
@@ -239,9 +243,6 @@ void StickerWrapper::rotate(float angle)
 {
     proxy->setRotation(angle);
     this->angle = angle;
-    #ifdef Q_OS_LINUX
-    updateMask();
-    #endif
 }
 
 #ifdef Q_OS_LINUX
