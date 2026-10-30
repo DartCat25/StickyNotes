@@ -43,7 +43,7 @@ if(QT6_CORE_TYPE STREQUAL "STATIC_LIBRARY")
     endif()
 endif()
 
-if(LINUX)
+if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
     find_package(X11 REQUIRED)
     target_link_libraries(StickyNotes PRIVATE X11::X11)
 
