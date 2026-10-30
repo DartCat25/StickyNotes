@@ -2,8 +2,9 @@
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+NATIVE="${STICKYNOTES_APPIMAGE_NATIVE:-0}"
 
-if [[ "${STICKYNOTES_APPIMAGE_INNER:-0}" != "1" ]]; then
+if [[ "$NATIVE" != "1" && "${STICKYNOTES_APPIMAGE_INNER:-0}" != "1" ]]; then
     if ! command -v docker >/dev/null 2>&1; then
         echo "docker is required" >&2
         exit 1
@@ -13,6 +14,7 @@ if [[ "${STICKYNOTES_APPIMAGE_INNER:-0}" != "1" ]]; then
 
     exec docker run --rm \
         -e STICKYNOTES_APPIMAGE_INNER=1 \
+        -e OUTPUT_DIR=/out \
         -e HOST_UID="$(id -u)" \
         -e HOST_GID="$(id -g)" \
         -v "$ROOT:/src:ro" \
@@ -22,10 +24,16 @@ if [[ "${STICKYNOTES_APPIMAGE_INNER:-0}" != "1" ]]; then
         bash /src/packaging/build-appimage.sh
 fi
 
+OUTPUT_DIR="${OUTPUT_DIR:-$ROOT/dist}"
+SUDO=()
+if [[ "$NATIVE" == "1" && "$EUID" -ne 0 ]]; then
+    SUDO=(sudo)
+fi
+
 export DEBIAN_FRONTEND=noninteractive
 
-apt-get update
-apt-get install -y --no-install-recommends \
+"${SUDO[@]}" env DEBIAN_FRONTEND=noninteractive apt-get update
+"${SUDO[@]}" env DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
     build-essential \
     ca-certificates \
     cmake \
@@ -91,10 +99,11 @@ rm -f "$OUTPUT"
 
 "$TOOLS_DIR/appimagetool" "$APPDIR" "$OUTPUT"
 
-install -m 0755 "$OUTPUT" "/out/$(basename "$OUTPUT")"
+mkdir -p "$OUTPUT_DIR"
+install -m 0755 "$OUTPUT" "$OUTPUT_DIR/$(basename "$OUTPUT")"
 
 if [[ -n "${HOST_UID:-}" && -n "${HOST_GID:-}" ]]; then
-    chown "$HOST_UID:$HOST_GID" "/out/$(basename "$OUTPUT")"
+    chown "$HOST_UID:$HOST_GID" "$OUTPUT_DIR/$(basename "$OUTPUT")"
 fi
 
-echo "AppImage: $ROOT/dist/$(basename "$OUTPUT")"
+echo "AppImage: $OUTPUT_DIR/$(basename "$OUTPUT")"

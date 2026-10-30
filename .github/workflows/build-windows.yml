@@ -1,0 +1,57 @@
+name: Build Windows
+
+on:
+  workflow_dispatch:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: windows-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: windows-2022
+    timeout-minutes: 30
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up MSVC
+        uses: ilammy/msvc-dev-cmd@v1
+        with:
+          arch: x64
+
+      - name: Install Qt
+        uses: jurplel/install-qt-action@v4
+        with:
+          version: "6.8.3"
+          arch: win64_msvc2022_64
+          archives: "qtbase qtsvg"
+          cache: true
+
+      - name: Build and package
+        shell: pwsh
+        run: ./packaging/build-windows.ps1
+
+      - name: Create checksum
+        shell: pwsh
+        run: |
+          Get-FileHash dist\*windows-x64.zip -Algorithm SHA256 | ForEach-Object {
+              "$($_.Hash)  $($_.Path | Split-Path -Leaf)"
+          } | Set-Content dist\SHA256SUMS.txt
+
+      - name: Upload Windows package
+        uses: actions/upload-artifact@v4
+        with:
+          name: StickyNotes-Windows-x64
+          path: |
+            dist/*windows-x64.zip
+            dist/SHA256SUMS.txt
+          if-no-files-found: error
+          retention-days: 14
