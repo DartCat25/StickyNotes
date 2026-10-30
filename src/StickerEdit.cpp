@@ -113,6 +113,12 @@ void StickerEdit::focusOutEvent(QFocusEvent* e)
 
         sticker->notifyTextChanged();
     }
+
+    if (e->reason() == Qt::ActiveWindowFocusReason)
+    {
+        clearFocus();
+    }
+
     QTextEdit::focusOutEvent(e);
 }
 

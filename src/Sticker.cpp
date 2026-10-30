@@ -220,6 +220,8 @@ void Sticker::header_pressed(QMouseEvent* event)
     if (event->button() != Qt::LeftButton)
         return;
 
+    setFocus();
+
     wrapper->startDragging(event->globalPosition());
 }
 
