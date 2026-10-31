@@ -1,0 +1,41 @@
+name: Build AppImage
+
+on:
+  workflow_dispatch:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: appimage-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-22.04
+    timeout-minutes: 30
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Build AppImage
+        env:
+          STICKYNOTES_APPIMAGE_NATIVE: "1"
+        run: ./packaging/build-appimage.sh
+
+      - name: Create checksum
+        run: sha256sum dist/*.AppImage > dist/SHA256SUMS.txt
+
+      - name: Upload AppImage
+        uses: actions/upload-artifact@v4
+        with:
+          name: StickyNotes-AppImage
+          path: |
+            dist/*.AppImage
+            dist/SHA256SUMS.txt
+          if-no-files-found: error
+          retention-days: 14

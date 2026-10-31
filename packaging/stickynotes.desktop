@@ -1,0 +1,10 @@
+[Desktop Entry]
+Type=Application
+Name=StickyNotes
+GenericName=Desktop Sticky Notes
+Comment=Create sticky notes on the desktop
+Exec=StickyNotes
+Icon=stickynotes
+Terminal=false
+Categories=Utility;
+StartupNotify=false

@@ -1,6 +1,6 @@
 # StickyNotes
 
-A small desktop application for creating sticky notes on Linux. Notes can be moved, resized, edited, and are saved locally.
+A small desktop application for creating sticky notes on Linux and Windows. Notes can be moved, resized, edited, and are saved locally.
 
 <p align="center">
   <img src="media/sticky_notes.png" alt="StickyNotes on the desktop" width="480">
@@ -23,6 +23,33 @@ A small desktop application for creating sticky notes on Linux. Notes can be mov
 </p>
 
 # Installation
+
+Check the [Releases](https://github.com/DartCat25/StickyNotes/releases) page for prebuilt packages. If there is no release for your platform yet, build from source below.
+
+## Linux
+
+Download `StickyNotes-*.AppImage`, make it executable, and run it:
+
+```bash
+chmod +x StickyNotes-*.AppImage
+./StickyNotes-*.AppImage
+```
+
+If FUSE is unavailable, start it with:
+
+```bash
+./StickyNotes-*.AppImage --appimage-extract-and-run
+```
+
+Linux builds use X11 or run through XWayland.
+
+## Windows
+
+Download `StickyNotes-*-windows-x64.zip`, extract it completely, and run `StickyNotes.exe`. Keep all DLLs and the `platforms`, `styles`, and `imageformats` folders next to the executable.
+
+Requires Windows 10/11 x64.
+
+# Build from source
 
 ## Linux
 
@@ -54,7 +81,7 @@ sudo pacman -S --needed base-devel cmake pkgconf qt6-base qt6-declarative libx11
 sudo dnf install cmake gcc-c++ pkgconf-pkg-config qt6-qtbase-devel qt6-qtdeclarative-devel libX11-devel libxcb-devel
 ```
 
-## Build
+### Build
 
 ```bash
 git clone https://github.com/DartCat25/StickyNotes.git
@@ -80,26 +107,26 @@ Sticker data is stored in `~/.local/share/StickyNotes/stickers`.
 - Qt 6.12.0, **MSVC 2022 64-bit** (Core, Gui, Widgets)
 - CMake 4.4.4
 
-## Install
+### Build prerequisites
 
-### Visual Studio 2022 Build Tools
+#### Visual Studio 2022 Build Tools
 
 Download **Build Tools for Visual Studio 2022** from
 <https://visualstudio.microsoft.com/downloads/> and install the
 *Desktop development with C++* workload (MSVC v143 compiler and a Windows SDK).
 
-### Qt 6.12.0
+#### Qt 6.12.0
 
 Run the **Qt Online Installer** from <https://www.qt.io/download-qt-installer> and
 select version `6.12.0` with the `MSVC 2022 64-bit` kit. The default installation
 path is `C:\Qt\6.12.0\msvc2022_64`.
 
-### CMake 4.4.4
+#### CMake 4.4.4
 
 Download the Windows x64 package from <https://cmake.org/download/> and install it,
 so that `cmake` is available in the command line.
 
-## Build
+### Build
 
 ```bat
 cmake -S . -B build -G "Visual Studio 17 2022" -A x64 ^
@@ -111,7 +138,7 @@ cmake --build build --config Release
 `CMAKE_PREFIX_PATH` must point at the Qt kit directory, the one containing
 `lib/cmake/Qt6`. The executable is produced at `build\Release\StickyNotes.exe`.
 
-## Run
+### Run
 
 Qt is linked dynamically, so the Qt DLLs and the `platforms` plugin have to be
 next to the executable:
@@ -126,7 +153,7 @@ The resulting `build\dist` folder is self-contained and can be copied to another
 machine as is. For a quick run from the build tree it is enough to add the Qt
 `bin` directory to `PATH`.
 
-## IDE
+### IDE
 
 Qt Creator: open `CMakeLists.txt` and select the `MSVC 2022 64-bit` kit.
 
