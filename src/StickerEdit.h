@@ -18,8 +18,11 @@ protected:
     void focusOutEvent(QFocusEvent *e) override;
 
     void mousePressEvent(QMouseEvent *e) override;
+    void mouseMoveEvent(QMouseEvent *e) override;
     void mouseReleaseEvent(QMouseEvent *e) override;
     void mouseDoubleClickEvent(QMouseEvent *e) override;
+
+    void keyPressEvent(QKeyEvent *e) override;
 
     void contextMenuEvent(QContextMenuEvent *e) override;
 
@@ -27,8 +30,11 @@ private:
     QTextBlock markerBlockAt(const QPointF& pos) const;
     int checkboxPosition(QTextBlock block) const;
     void toggleCheckbox(QTextBlock block);
+    void wrapSelection(const QString& marker);
+    void wrapSelection(const QString& markerLeft, const QString& markerRight);
 
     QString innerText;
     bool isFocused;
     bool checkboxPressed;
+    bool linkPressed;
 };

@@ -3,6 +3,7 @@
 #include <qabstracttextdocumentlayout.h>
 #include <qaction.h>
 #include <qclipboard.h>
+#include <qdesktopservices.h>
 #include <qevent.h>
 #include <qguiapplication.h>
 #include <qmenu.h>
@@ -10,6 +11,7 @@
 #include <qscrollbar.h>
 #include <qtextcursor.h>
 #include <qtextdocument.h>
+#include <qurl.h>
 #include <qwindowdefs.h>
 #include <QClipboard>
 #include <QRegularExpression>
@@ -83,6 +85,7 @@ StickerEdit::StickerEdit(QWidget* parent) : QTextEdit(parent)
     innerText = "";
     isFocused = false;
     checkboxPressed = false;
+    linkPressed = false;
 
     // Clicks no longer take the focus by themselves, see mousePressEvent.
     setFocusPolicy(Qt::TabFocus);
@@ -110,6 +113,12 @@ void StickerEdit::focusOutEvent(QFocusEvent* e)
 
         sticker->notifyTextChanged();
     }
+
+    if (e->reason() == Qt::ActiveWindowFocusReason)
+    {
+        clearFocus();
+    }
+
     QTextEdit::focusOutEvent(e);
 }
 
@@ -196,10 +205,78 @@ void StickerEdit::toggleCheckbox(QTextBlock block)
     }
 }
 
+// The markers are inserted next to the selection, the selected text itself is
+// left as it is; afterwards the same text is selected again.
+void StickerEdit::wrapSelection(const QString& marker)
+{
+    QTextCursor cursor = textCursor();
+
+    if (!cursor.hasSelection())
+        return;
+
+    int start = cursor.selectionStart();
+    int end = cursor.selectionEnd();
+    int offset = marker.size();
+
+    cursor.beginEditBlock();
+
+    cursor.setPosition(end);
+    cursor.insertText(marker);
+
+    cursor.setPosition(start);
+    cursor.insertText(marker);
+
+    cursor.setPosition(start + offset);
+    cursor.setPosition(end + offset, QTextCursor::KeepAnchor);
+
+    cursor.endEditBlock();
+
+    setTextCursor(cursor);
+}
+
+void StickerEdit::wrapSelection(const QString& markerLeft, const QString& markerRight)
+{
+    QTextCursor cursor = textCursor();
+
+    if (!cursor.hasSelection())
+        return;
+
+    int start = cursor.selectionStart();
+    int end = cursor.selectionEnd();
+    int offsetLeft = markerLeft.size();
+    int offsetRight = markerRight.size();
+
+    cursor.beginEditBlock();
+
+    cursor.setPosition(end);
+    cursor.insertText(markerRight);
+
+    cursor.setPosition(start);
+    cursor.insertText(markerLeft);
+
+    // cursor.setPosition(start + offsetLeft);
+    cursor.setPosition(end + offsetRight);
+
+    cursor.endEditBlock();
+
+    setTextCursor(cursor);
+}
+
 void StickerEdit::mousePressEvent(QMouseEvent* e)
 {
+    linkPressed = false;
+
     if (e->button() == Qt::LeftButton)
     {
+        // The link is followed on release, the press is only swallowed here so
+        // the editor does not take the focus.
+        if (!anchorAt(e->position().toPoint()).isEmpty())
+        {
+            linkPressed = true;
+            e->accept();
+            return;
+        }
+
         QTextBlock block = markerBlockAt(e->position());
 
         if (isCheckbox(block))
@@ -219,8 +296,38 @@ void StickerEdit::mousePressEvent(QMouseEvent* e)
     QTextEdit::mousePressEvent(e);
 }
 
+void StickerEdit::mouseMoveEvent(QMouseEvent* e)
+{
+    QTextEdit::mouseMoveEvent(e);
+
+    if (isFocused)
+        return;
+
+    // The links are opened by the editor itself, and the text control does not
+    // know about checkboxes, so the cursor shape is chosen here.
+    QPointF pos = e->position();
+
+    bool clickable = !anchorAt(pos.toPoint()).isEmpty()
+        || isCheckbox(markerBlockAt(pos));
+
+    viewport()->setCursor(clickable ? Qt::PointingHandCursor : Qt::IBeamCursor);
+}
+
 void StickerEdit::mouseReleaseEvent(QMouseEvent* e)
 {
+    if (linkPressed && e->button() == Qt::LeftButton)
+    {
+        linkPressed = false;
+
+        QString link = anchorAt(e->position().toPoint());
+
+        if (!link.isEmpty())
+            QDesktopServices::openUrl(QUrl(link));
+
+        e->accept();
+        return;
+    }
+
     // The text control toggles a checkbox on release, so the release of a
     // marker click is dropped as well or the marker is switched twice.
     if (checkboxPressed && e->button() == Qt::LeftButton)
@@ -235,13 +342,67 @@ void StickerEdit::mouseReleaseEvent(QMouseEvent* e)
 
 void StickerEdit::mouseDoubleClickEvent(QMouseEvent* e)
 {
-    if (e->button() == Qt::LeftButton && isCheckbox(markerBlockAt(e->position())))
+    if (e->button() == Qt::LeftButton
+        && (isCheckbox(markerBlockAt(e->position()))
+            || !anchorAt(e->position().toPoint()).isEmpty()))
     {
         e->accept();
         return;
     }
 
     QTextEdit::mouseDoubleClickEvent(e);
+}
+
+void StickerEdit::keyPressEvent(QKeyEvent* e)
+{
+    if (e->modifiers() & Qt::ControlModifier)
+    {
+        if (e->modifiers() & Qt::ShiftModifier)
+        {
+            switch (e->key())
+            {
+                case Qt::Key_X:
+                    wrapSelection("~");
+                    e->accept();
+                    return;
+                case Qt::Key_M:
+                    wrapSelection("`");
+                    e->accept();
+                    return;
+            }
+            if (e->text() == ".")
+            {
+                wrapSelection("> ", "");
+                e->accept();
+                return;
+            }
+        }
+
+
+        // The keys are swallowed even without a selection, otherwise the text
+        // control would apply its own rich text formatting.
+        switch (e->key())
+        {
+            case Qt::Key_B:
+                wrapSelection("**");
+                e->accept();
+                return;
+            case Qt::Key_I:
+                wrapSelection("*");
+                e->accept();
+                return;
+            case Qt::Key_U:
+                wrapSelection("_");
+                e->accept();
+                return;
+            case Qt::Key_L:
+                wrapSelection("[", "]()");
+                e->accept();
+                return;
+        }
+    }
+
+    QTextEdit::keyPressEvent(e);
 }
 
 //Remove base event
