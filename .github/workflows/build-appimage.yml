@@ -22,9 +22,18 @@ jobs:
       - name: Check out repository
         uses: actions/checkout@v4
 
+      - name: Install Qt
+        uses: jurplel/install-qt-action@v4
+        with:
+          version: "6.12.0"
+          arch: linux_gcc_64
+          archives: "qtbase"
+          cache: true
+
       - name: Build AppImage
         env:
           STICKYNOTES_APPIMAGE_NATIVE: "1"
+          QT_ROOT: ${{ env.QT_ROOT_DIR }}
         run: ./packaging/build-appimage.sh
 
       - name: Create checksum
