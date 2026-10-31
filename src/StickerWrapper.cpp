@@ -24,6 +24,7 @@
 #include <X11/Xlib.h>
 #include <X11/Xatom.h>
 #include <xcb/xcb.h>
+#include <X11/extensions/shape.h>
 #endif
 
 #define WIDTH 412
@@ -175,6 +176,10 @@ void StickerWrapper::endDragging()
     if (!dragging)
         return;
 
+    #ifdef Q_OS_LINUX
+    updateMask();
+    #endif
+
     dragging = false;
     notifyTransformChanged();
 }
@@ -239,18 +244,29 @@ void StickerWrapper::rotate(float angle)
 {
     proxy->setRotation(angle);
     this->angle = angle;
-    #ifdef Q_OS_LINUX
-    updateMask();
-    #endif
 }
 
 #ifdef Q_OS_LINUX
 void StickerWrapper::updateMask()
 {
     QPolygonF scenePath = proxy->mapToScene(sticker->rect());   
-    QRegion maskRegion(scenePath.toPolygon());
+
+    QNativeInterface::QX11Application *x11App = qApp->nativeInterface<QNativeInterface::QX11Application>();
+    Display *display = x11App->display();
+    Window window = winId();
+
+    QVector<XPoint> points;
+    points.reserve(scenePath.size());
+
+    for (const QPointF &pt : scenePath)
+    {
+        points.append({(short)pt.x(), (short)pt.y()});
+    }
     
-    setMask(maskRegion);
+    Region region = XPolygonRegion(points.data(), points.size(), EvenOddRule);
+
+    XShapeCombineRegion(display, window, ShapeInput, 0, 0, region, ShapeSet);
+    XDestroyRegion(region);
 }
 #endif
 

@@ -44,7 +44,7 @@ if(QT6_CORE_TYPE STREQUAL "STATIC_LIBRARY")
 endif()
 
 if(LINUX)
-    find_package(X11 REQUIRED)
+    find_package(X11 REQUIRED COMPONENTS Xext)
     target_link_libraries(StickyNotes PRIVATE X11::X11)
 
     find_package(PkgConfig REQUIRED)
@@ -53,5 +53,6 @@ if(LINUX)
     target_link_libraries(StickyNotes PRIVATE
         Qt6::Widgets
         PkgConfig::XCB
+        X11::Xext
     )
 endif()
