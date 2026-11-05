@@ -8,7 +8,7 @@ set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTORCC ON)
 
-find_package(Qt6 REQUIRED COMPONENTS Core Gui Widgets)
+find_package(Qt6 6.2 REQUIRED COMPONENTS Core Gui Widgets)
 
 # Define your source files
 file(GLOB_RECURSE SOURCES "src/*.cpp")
@@ -43,8 +43,8 @@ if(QT6_CORE_TYPE STREQUAL "STATIC_LIBRARY")
     endif()
 endif()
 
-if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
-    find_package(X11 REQUIRED)
+if(UNIX AND NOT APPLE)
+    find_package(X11 REQUIRED COMPONENTS Xext)
     target_link_libraries(StickyNotes PRIVATE X11::X11)
 
     find_package(PkgConfig REQUIRED)

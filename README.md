@@ -56,9 +56,9 @@ Requires Windows 10/11 x64.
 ### Requirements
 
 - Linux with X11/XCB. On Wayland the application runs through XWayland.
-- CMake 3.25 or newer
+- CMake 3.16 or newer
 - C++17 compiler
-- Qt 6 with Core, Gui, Widgets, and Quick
+- Qt 6.2 or newer with Core, Gui, and Widgets
 - X11 and XCB development libraries
 - pkg-config
 
@@ -66,19 +66,19 @@ Requires Windows 10/11 x64.
 
 ```bash
 sudo apt update
-sudo apt install build-essential cmake pkg-config qt6-base-dev qt6-declarative-dev libx11-dev libxcb1-dev
+sudo apt install build-essential cmake pkg-config qt6-base-dev libx11-dev libxext-dev libxcb1-dev
 ```
 
 ### Arch Linux
 
 ```bash
-sudo pacman -S --needed base-devel cmake pkgconf qt6-base qt6-declarative libx11 libxcb
+sudo pacman -S --needed base-devel cmake pkgconf qt6-base libx11 libxext libxcb
 ```
 
 ### Fedora
 
 ```bash
-sudo dnf install cmake gcc-c++ pkgconf-pkg-config qt6-qtbase-devel qt6-qtdeclarative-devel libX11-devel libxcb-devel
+sudo dnf install cmake gcc-c++ pkgconf-pkg-config qt6-qtbase-devel libX11-devel libXext-devel libxcb-devel
 ```
 
 ### Build
@@ -104,8 +104,8 @@ Sticker data is stored in `~/.local/share/StickyNotes/stickers`.
 
 - Windows 10 (1809 or later) or Windows 11, x64
 - Visual Studio 2022 Build Tools, workload **Desktop development with C++**
-- Qt 6.12.0, **MSVC 2022 64-bit** (Core, Gui, Widgets)
-- CMake 4.4.4
+- Qt 6.2.4, **MSVC 2019 64-bit** (Core, Gui, Widgets)
+- CMake 3.16 or newer
 
 ### Build prerequisites
 
@@ -115,22 +115,22 @@ Download **Build Tools for Visual Studio 2022** from
 <https://visualstudio.microsoft.com/downloads/> and install the
 *Desktop development with C++* workload (MSVC v143 compiler and a Windows SDK).
 
-#### Qt 6.12.0
+#### Qt 6.2.4
 
 Run the **Qt Online Installer** from <https://www.qt.io/download-qt-installer> and
-select version `6.12.0` with the `MSVC 2022 64-bit` kit. The default installation
-path is `C:\Qt\6.12.0\msvc2022_64`.
+select version `6.2.4` with the `MSVC 2019 64-bit` kit. The default installation
+path is `C:\Qt\6.2.4\msvc2019_64`.
 
-#### CMake 4.4.4
+#### CMake
 
 Download the Windows x64 package from <https://cmake.org/download/> and install it,
-so that `cmake` is available in the command line.
+so that `cmake` is available in the command line. CMake 3.16 or newer is required.
 
 ### Build
 
 ```bat
 cmake -S . -B build -G "Visual Studio 17 2022" -A x64 ^
-  -DCMAKE_PREFIX_PATH=C:/Qt/6.12.0/msvc2022_64
+  -DCMAKE_PREFIX_PATH=C:/Qt/6.2.4/msvc2019_64
 
 cmake --build build --config Release
 ```
@@ -146,7 +146,7 @@ next to the executable:
 ```bat
 mkdir build\dist
 copy build\Release\StickyNotes.exe build\dist
-C:\Qt\6.12.0\msvc2022_64\bin\windeployqt.exe --release --dir build\dist build\dist\StickyNotes.exe
+C:\Qt\6.2.4\msvc2019_64\bin\windeployqt.exe --release --dir build\dist build\dist\StickyNotes.exe
 ```
 
 The resulting `build\dist` folder is self-contained and can be copied to another
@@ -158,7 +158,7 @@ machine as is. For a quick run from the build tree it is enough to add the Qt
 Qt Creator: open `CMakeLists.txt` and select the `MSVC 2022 64-bit` kit.
 
 Visual Studio: open the folder as a CMake project, or open the generated
-`build\StickyNotes.sln`. For debugging, add `C:\Qt\6.12.0\msvc2022_64\bin` to the
+`build\StickyNotes.sln`. For debugging, add `C:\Qt\6.2.4\msvc2019_64\bin` to the
 debugging environment.
 
 Visual Studio Code: install the *C/C++* and *CMake Tools* extensions and point
