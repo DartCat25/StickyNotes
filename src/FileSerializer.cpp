@@ -164,7 +164,7 @@ StickerData FileSerializer::deserialize(std::string text)
         break;
         case SDN_COLOR:
         {
-            data.color = QColor::fromString(dataValue);
+            data.color = QColor(QString::fromStdString(dataValue));
         }
         break;
         case SDN_STACK:
