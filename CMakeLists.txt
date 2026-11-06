@@ -8,7 +8,7 @@ set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTORCC ON)
 
-find_package(Qt6 REQUIRED COMPONENTS Core Gui Widgets)
+find_package(Qt6 6.2 REQUIRED COMPONENTS Core Gui Widgets)
 
 # Define your source files
 file(GLOB_RECURSE SOURCES "src/*.cpp")
@@ -27,23 +27,7 @@ Qt6::Gui
 Qt6::Widgets
 )
 
-# Static Qt does not find its platform plugin at runtime unless it is linked in.
-get_target_property(QT6_CORE_TYPE Qt6::Core TYPE)
-if(QT6_CORE_TYPE STREQUAL "STATIC_LIBRARY")
-    if(WIN32)
-        qt_import_plugins(StickyNotes INCLUDE Qt6::QWindowsIntegrationPlugin)
-    endif()
-
-    # Link the compiler runtime statically as well, so the exe is self-contained.
-    if(MINGW)
-        target_link_options(StickyNotes PRIVATE -static)
-    elseif(MSVC)
-        set_property(TARGET StickyNotes PROPERTY
-            MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
-    endif()
-endif()
-
-if(LINUX)
+if(UNIX AND NOT APPLE)
     find_package(X11 REQUIRED COMPONENTS Xext)
     target_link_libraries(StickyNotes PRIVATE X11::X11)
 
