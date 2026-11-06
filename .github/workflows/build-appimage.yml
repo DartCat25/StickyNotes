@@ -23,8 +23,6 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Build AppImage
-        env:
-          STICKYNOTES_APPIMAGE_NATIVE: "1"
         run: ./packaging/build-appimage.sh
 
       - name: Create checksum

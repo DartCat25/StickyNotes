@@ -1,0 +1,35 @@
+FROM ubuntu:22.04
+
+ENV DEBIAN_FRONTEND=noninteractive \
+    APPIMAGE_EXTRACT_AND_RUN=1 \
+    ARCH=x86_64 \
+    PATH=/opt/appimage-tools:$PATH
+
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
+        build-essential \
+        ca-certificates \
+        cmake \
+        file \
+        libgl1-mesa-dev \
+        libx11-dev \
+        libxcb1-dev \
+        libxext-dev \
+        patchelf \
+        pkg-config \
+        qt6-base-dev \
+        wget \
+    && rm -rf /var/lib/apt/lists/*
+
+RUN mkdir -p /opt/appimage-tools \
+    && wget -q -O /opt/appimage-tools/linuxdeploy \
+        https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/linuxdeploy-x86_64.AppImage \
+    && wget -q -O /opt/appimage-tools/linuxdeploy-plugin-qt \
+        https://github.com/linuxdeploy/linuxdeploy-plugin-qt/releases/download/continuous/linuxdeploy-plugin-qt-x86_64.AppImage \
+    && wget -q -O /opt/appimage-tools/appimagetool \
+        https://github.com/AppImage/appimagetool/releases/download/continuous/appimagetool-x86_64.AppImage \
+    && chmod +x /opt/appimage-tools/linuxdeploy \
+        /opt/appimage-tools/linuxdeploy-plugin-qt \
+        /opt/appimage-tools/appimagetool
+
+WORKDIR /src
