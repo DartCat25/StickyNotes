@@ -46,12 +46,21 @@ if ($LASTEXITCODE -ne 0) {
     throw "windeployqt failed"
 }
 
-$redistRoot = if ($env:VCToolsRedistDir) { $env:VCToolsRedistDir } else { Join-Path $env:VCINSTALLDIR "redist\MSVC" }
-$crtDir = Get-ChildItem $redistRoot -Recurse -Directory -Filter "Microsoft.VC*.CRT" |
-    Where-Object { $_.FullName -match '\\x64\\' } |
+# VCToolsRedistDir points at ...\MSVC\<version>, VCINSTALLDIR at ...\VC.
+# Recursively find the desktop x64 CRT and explicitly skip the onecore copy.
+$redist = if ($env:VCToolsRedistDir) {
+    $env:VCToolsRedistDir
+} elseif ($env:VCINSTALLDIR) {
+    Join-Path $env:VCINSTALLDIR "redist\MSVC"
+} else {
+    throw "MSVC redistributable directory not found. Run from a Visual Studio developer prompt."
+}
+$crtDir = Get-ChildItem $redist -Recurse -Directory -Filter "Microsoft.VC*.CRT" |
+    Where-Object { $_.FullName -match '\\x64\\' -and $_.FullName -notmatch '\\onecore\\' } |
+    Sort-Object FullName -Descending |
     Select-Object -First 1
 if (-not $crtDir) {
-    throw "MSVC x64 CRT directory not found under $redistRoot"
+    throw "MSVC x64 CRT directory not found under $redist"
 }
 Copy-Item (Join-Path $crtDir.FullName "*.dll") $DistPath -Force
 
