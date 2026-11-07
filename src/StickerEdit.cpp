@@ -90,6 +90,12 @@ StickerEdit::StickerEdit(QWidget* parent) : QTextEdit(parent)
 
     // Clicks no longer take the focus by themselves, see mousePressEvent.
     setFocusPolicy(Qt::TabFocus);
+    verticalScrollBar()->setAttribute(Qt::WA_OpaquePaintEvent, false);
+    setStyleSheet(
+        "QTextEdit { border: none; font-size:12pt; top-margin: 0px;}"
+        "QScrollBar::up-arrow, QScrollBar::down-arrow, QScrollBar::add-line, QScrollBar::sub-line { background: transparent; border: none; }"
+        "QScrollBar::sub-page, QScrollBar::add-page { background: transparent; }"
+    );
     document()->setIndentWidth(20.0);
 }
 

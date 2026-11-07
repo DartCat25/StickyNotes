@@ -43,6 +43,7 @@ Sticker::Sticker(StickerWrapper* parent) : QFrame()
 
     QVBoxLayout* vbox = new QVBoxLayout(this);
     vbox->setContentsMargins(0, 0, 0, 0);
+    vbox->setSpacing(0);
 
     // // Header
     
@@ -80,7 +81,6 @@ Sticker::Sticker(StickerWrapper* parent) : QFrame()
 
     textEdit = new StickerEdit();
     textEdit->setSizePolicy(expand);
-    textEdit->setStyleSheet("border: none; font-size:12pt;");
     textEdit->setMinimumSize(0, 0);
     textEdit->installEventFilter(this);
 
@@ -299,11 +299,18 @@ void Sticker::setBackgroundColor(QColor color)
         std::min(int(s * 1.2f), 255),
         std::max(int(l * 0.8f), 0));
 
+    QColor scrollHandleColor = QColor::fromHsl(
+        h,
+        std::max(int(s * 0.8f), 0),
+        std::max(int(l * 0.76f), 0));
+
     QString penColor = L > 0.179 ? "black" : "white";
 
     setStyleSheet("QWidget {background: " + color.name()
     + "; color: " + penColor
     + ";} QWidget#Sticker {border: 2px solid " + borderColor.name() + ";}"
+    + "QScrollBar { width: 10px; background: "+ headerColor.name() + "; }"
+    + "QScrollBar::handle {border-radius: 5px; background:" + scrollHandleColor.name() + ";}"
     );
     header->setStyleSheet("background: " + headerColor.name() + "; color: " + penColor + ";");
 
