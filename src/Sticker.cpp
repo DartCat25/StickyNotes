@@ -270,8 +270,9 @@ void Sticker::contextMenuEvent(QContextMenuEvent *event) {
         wrapper->setStackPos(SP_BOTTOM);
     if (selectedAction == setColor)
     {
-        QColor color = QColorDialog::getColor("#fef5c1");
-        wrapper->setBackgroundColor(color);
+        QColor color = QColorDialog::getColor(backgroundColor);
+        if (color.isValid())
+            wrapper->setBackgroundColor(color);
     }
 }
 
