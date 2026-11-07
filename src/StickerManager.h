@@ -26,6 +26,7 @@ private slots:
     void onCloseRequested();
 
     void onTrayIconActivated(QSystemTrayIcon::ActivationReason reason);
+    void onOpenStickersFolder();
 
 private:
     void connectSticker(StickerWrapper* sticker);

@@ -12,6 +12,7 @@ public:
 
     static std::string defaultPath();
     void setPath(std::string path);
+    const std::string& getPath() const;
 
     uint32_t createSticker(StickerData data);
     bool removeSticker(uint32_t id);
