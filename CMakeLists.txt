@@ -12,6 +12,7 @@ find_package(Qt6 6.2 REQUIRED COMPONENTS Core Gui Widgets)
 
 # Define your source files
 file(GLOB_RECURSE SOURCES "src/*.cpp")
+list(APPEND SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/resources.qrc")
 
 # WIN32 makes the app a GUI application on Windows (no console window).
 # The keyword is ignored on other platforms.

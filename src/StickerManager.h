@@ -4,6 +4,8 @@
 #include "StickerWrapper.h"
 #include <QObject>
 #include <QPoint>
+#include <QSystemTrayIcon>
+#include <QMenu>
 
 class StickerManager : public QObject {
     Q_OBJECT
@@ -23,6 +25,8 @@ private slots:
     void onStackPosChanged(StackPos pos);
     void onCloseRequested();
 
+    void onTrayIconActivated(QSystemTrayIcon::ActivationReason reason);
+
 private:
     void connectSticker(StickerWrapper* sticker);
     void createCloner(QPoint pos);
@@ -32,4 +36,6 @@ private:
     StickerWrapper* cloner;
     StickerStorage* storage;
     bool shuttingDown;
+
+    QMenu* menu;
 };
