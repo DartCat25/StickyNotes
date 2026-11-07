@@ -101,6 +101,12 @@ void Sticker::notifyTextChanged()
     wrapper->notifyTextChanged();
 }
 
+void Sticker::notifyRaise()
+{
+    wrapper->activateWindow();
+    // wrapper->raise();
+}
+
 bool Sticker::eventFilter(QObject* watched, QEvent* event)
 {
     if (watched == header &&

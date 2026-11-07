@@ -16,6 +16,7 @@
 #include <QClipboard>
 #include <QRegularExpression>
 #include <QTextList>
+#include <QMimeData>
 
 namespace {
 
@@ -459,6 +460,32 @@ void StickerEdit::contextMenuEvent(QContextMenuEvent *e)
             clip->setText(innerText, QClipboard::Selection);
         }
     }
+}
+
+void StickerEdit::dragEnterEvent(QDragEnterEvent *e)
+{
+    const QMimeData *m = e->mimeData();
+
+    if (!m->hasUrls() && !m->hasText())
+    {
+        QTextEdit::dragEnterEvent(e);    
+        return;
+    }
+
+    if (parent())
+    {
+        Sticker* sticker = (Sticker*)parent();
+
+        sticker->notifyRaise();
+    }
+    setFocus();
+    QTextEdit::dragEnterEvent(e);
+}
+
+void StickerEdit::dragLeaveEvent(QDragLeaveEvent *e)
+{
+    if (parentWidget()) parentWidget()->setFocus();
+    QTextEdit::dragLeaveEvent(e);
 }
 
 void StickerEdit::setInnerText(QString text)

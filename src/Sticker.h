@@ -27,6 +27,7 @@ public:
     QString getText();
 
     void notifyTextChanged();
+    void notifyRaise();
 protected:
     bool eventFilter(QObject* watched, QEvent* event) override;
 

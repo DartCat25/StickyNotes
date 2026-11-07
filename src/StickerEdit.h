@@ -26,6 +26,9 @@ protected:
 
     void contextMenuEvent(QContextMenuEvent *e) override;
 
+    void dragEnterEvent(QDragEnterEvent *e) override;
+    void dragLeaveEvent(QDragLeaveEvent *e) override;
+
 private:
     QTextBlock markerBlockAt(const QPointF& pos) const;
     int checkboxPosition(QTextBlock block) const;
