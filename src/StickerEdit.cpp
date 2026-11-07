@@ -15,6 +15,7 @@
 #include <qwindowdefs.h>
 #include <QClipboard>
 #include <QRegularExpression>
+#include <QTextList>
 
 namespace {
 
@@ -89,6 +90,7 @@ StickerEdit::StickerEdit(QWidget* parent) : QTextEdit(parent)
 
     // Clicks no longer take the focus by themselves, see mousePressEvent.
     setFocusPolicy(Qt::TabFocus);
+    document()->setIndentWidth(20.0);
 }
 
 StickerEdit::~StickerEdit()
@@ -122,15 +124,42 @@ void StickerEdit::focusOutEvent(QFocusEvent* e)
     QTextEdit::focusOutEvent(e);
 }
 
-// The layout is drawn without the scroll offset, the same way the position is
-// passed to the text control by QTextEdit.
-QTextBlock StickerEdit::markerBlockAt(const QPointF& pos) const
+//Patched version of QAbstractTextDocumentLayout::blockWithMarkerAt
+QTextBlock StickerEdit::markerBlockAt(const QPointF &pos) const
 {
     QPointF documentPos = pos + QPointF(
-        horizontalScrollBar()->value(),
-        verticalScrollBar()->value());
+            horizontalScrollBar()->value(),
+            verticalScrollBar()->value());
 
-    return document()->documentLayout()->blockWithMarkerAt(documentPos);
+    QAbstractTextDocumentLayout *layout = document()->documentLayout();
+    QTextBlock block = document()->firstBlock();
+
+    while (block.isValid()) {
+        if (block.blockFormat().marker() != QTextBlockFormat::MarkerType::NoMarker) {
+            QRectF blockBr = layout->blockBoundingRect(block);
+            QTextBlockFormat blockFmt = block.blockFormat();
+            QFontMetricsF fm(block.charFormat().font());
+
+            qreal totalIndent = blockFmt.indent() + blockFmt.leftMargin() + blockFmt.textIndent();
+            if (block.textList())
+                totalIndent += block.textList()->format().indent() * document()->indentWidth();
+
+            qreal markerOffset = 0;
+            if (!blockBr.isNull() && block.layout()->lineCount() > 0)
+                markerOffset = block.layout()->lineAt(0).ascent() - fm.ascent();
+
+            QRectF adjustedBr = blockBr.adjusted(totalIndent - fm.height(),
+                                                 markerOffset,
+                                                 totalIndent - blockBr.width(),
+                                                 markerOffset + fm.height() - blockBr.height());
+
+            if (adjustedBr.contains(documentPos))
+                return block;
+        }
+        block = block.next();
+    }
+
+    return QTextBlock();
 }
 
 int StickerEdit::checkboxPosition(QTextBlock block) const
