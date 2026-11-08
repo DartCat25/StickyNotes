@@ -245,29 +245,7 @@ void StickerEdit::toggleCheckbox(QTextBlock block)
 // left as it is; afterwards the same text is selected again.
 void StickerEdit::wrapSelection(const QString& marker)
 {
-    QTextCursor cursor = textCursor();
-
-    if (!cursor.hasSelection())
-        return;
-
-    int start = cursor.selectionStart();
-    int end = cursor.selectionEnd();
-    int offset = marker.size();
-
-    cursor.beginEditBlock();
-
-    cursor.setPosition(end);
-    cursor.insertText(marker);
-
-    cursor.setPosition(start);
-    cursor.insertText(marker);
-
-    cursor.setPosition(start + offset);
-    cursor.setPosition(end + offset, QTextCursor::KeepAnchor);
-
-    cursor.endEditBlock();
-
-    setTextCursor(cursor);
+    wrapSelection(marker, marker);
 }
 
 void StickerEdit::wrapSelection(const QString& markerLeft, const QString& markerRight)
@@ -290,11 +268,39 @@ void StickerEdit::wrapSelection(const QString& markerLeft, const QString& marker
     cursor.setPosition(start);
     cursor.insertText(markerLeft);
 
-    // cursor.setPosition(start + offsetLeft);
-    cursor.setPosition(end + offsetRight);
+    cursor.setPosition(start + offsetLeft);
+    cursor.setPosition(end + offsetLeft, QTextCursor::KeepAnchor);
 
     cursor.endEditBlock();
 
+    setTextCursor(cursor);
+}
+
+void StickerEdit::wrapLink()
+{
+    wrapSelection("[", "]()");
+    QTextCursor cursor = textCursor();
+    if (!cursor.hasSelection()) return;
+    cursor.beginEditBlock();
+
+    cursor.setPosition(cursor.selectionEnd() + 2);
+
+    const QClipboard* clipboard = QGuiApplication::clipboard();
+    const QMimeData* mime = clipboard->mimeData();
+
+    if (mime->hasUrls())
+    {
+        cursor.insertText(mime->urls().first().toString());
+    }
+    else if (mime->hasText())
+    {
+        QString rawText = mime->text();
+        QUrl potentialUrl(rawText);
+        if (potentialUrl.isValid() && !potentialUrl.scheme().isEmpty())
+            cursor.insertText(rawText);
+    }
+
+    cursor.endEditBlock();
     setTextCursor(cursor);
 }
 
@@ -432,7 +438,7 @@ void StickerEdit::keyPressEvent(QKeyEvent* e)
                 e->accept();
                 return;
             case Qt::Key_L:
-                wrapSelection("[", "]()");
+                wrapLink();
                 e->accept();
                 return;
         }

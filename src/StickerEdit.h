@@ -35,6 +35,7 @@ private:
     void toggleCheckbox(QTextBlock block);
     void wrapSelection(const QString& marker);
     void wrapSelection(const QString& markerLeft, const QString& markerRight);
+    void wrapLink();
 
     QString innerText;
     bool isFocused;
