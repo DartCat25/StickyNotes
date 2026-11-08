@@ -1,6 +1,10 @@
 #include "StickerManager.h"
 #include <QApplication>
 #include <QScreen>
+#include <QAction>
+#include <QDesktopServices>
+#include <QIcon>
+#include <QUrl>
 
 StickerManager::StickerManager()
 {
@@ -8,6 +12,25 @@ StickerManager::StickerManager()
     storage = new StickerStorage();
     cloner = nullptr;
 
+    //Config tray
+    QSystemTrayIcon *trayIcon = new QSystemTrayIcon(QIcon(":/assets/icon.png"), this);
+    trayIcon->setToolTip("StickyNotes");
+
+    menu = new QMenu();
+
+    QAction* openFolderAction = menu->addAction("Open Stickers Folder");
+    connect(openFolderAction, &QAction::triggered,
+        this, &StickerManager::onOpenStickersFolder);
+
+    QAction* quitAction = menu->addAction("Quit");
+    connect(quitAction, &QAction::triggered, qApp, &QApplication::quit);
+
+    connect(trayIcon, &QSystemTrayIcon::activated, this, &StickerManager::onTrayIconActivated);
+
+    trayIcon->setContextMenu(menu);
+    trayIcon->show();
+
+    //Load stickers from storage
     for (const StickerData& data : storage->getStickers())
     {
         StickerWrapper* sticker = new StickerWrapper(data.id, &data);
@@ -21,7 +44,10 @@ StickerManager::~StickerManager()
 {
     shuttingDown = true;
     delete storage;
+    delete menu;
 }
+
+// // Signals
 
 void StickerManager::onTransformChanged(
         int32_t x, int32_t y,
@@ -92,6 +118,22 @@ void StickerManager::onCloseRequested()
 
     storage->removeSticker(sticker->getId());
 }
+
+void StickerManager::onTrayIconActivated(QSystemTrayIcon::ActivationReason reason)
+{
+    if (!cloner || reason != QSystemTrayIcon::Trigger)
+        return;
+    
+    cloner->activateWindow();
+}
+
+void StickerManager::onOpenStickersFolder()
+{
+    QDesktopServices::openUrl(
+        QUrl::fromLocalFile(QString::fromStdString(storage->getPath())));
+}
+
+// // Sticker Management
 
 void StickerManager::connectSticker(StickerWrapper* sticker)
 {

@@ -28,6 +28,11 @@ std::string StickerStorage::defaultPath()
     return (base + "/StickyNotes/stickers").toStdString();
 }
 
+const std::string& StickerStorage::getPath() const
+{
+    return path;
+}
+
 void StickerStorage::setPath(std::string path)
 {
     if (path.empty())
