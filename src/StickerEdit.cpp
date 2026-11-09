@@ -403,16 +403,16 @@ void StickerEdit::keyPressEvent(QKeyEvent* e)
         {
             switch (e->key())
             {
-                case Qt::Key_X:
+                case Qt::Key_X: //Strikethrough
                     wrapSelection("~");
                     e->accept();
                     return;
-                case Qt::Key_M:
+                case Qt::Key_M: //Code
                     wrapSelection("`");
                     e->accept();
                     return;
             }
-            if (e->text() == ".")
+            if (e->text() == ".") //Quote
             {
                 wrapSelection("> ", "");
                 e->accept();
@@ -425,20 +425,24 @@ void StickerEdit::keyPressEvent(QKeyEvent* e)
         // control would apply its own rich text formatting.
         switch (e->key())
         {
-            case Qt::Key_B:
+            case Qt::Key_B: //Bold
                 wrapSelection("**");
                 e->accept();
                 return;
-            case Qt::Key_I:
+            case Qt::Key_I: //Italic
                 wrapSelection("*");
                 e->accept();
                 return;
-            case Qt::Key_U:
+            case Qt::Key_U: //Underscore
                 wrapSelection("_");
                 e->accept();
                 return;
-            case Qt::Key_L:
+            case Qt::Key_L: //Link
                 wrapLink();
+                e->accept();
+                return;
+            case Qt::Key_H: //Hidden
+                wrapSelection("<!--", "-->");
                 e->accept();
                 return;
         }
