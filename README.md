@@ -98,6 +98,29 @@ cmake --build build -j"$(nproc)"
 
 Sticker data is stored in `~/.local/share/StickyNotes/stickers`.
 
+### AppImage
+
+`packaging/build-appimage.sh` builds the application and packages it into an
+AppImage with [linuxdeploy](https://github.com/linuxdeploy/linuxdeploy),
+`linuxdeploy-plugin-qt` and `appimagetool`.
+
+```bash
+sudo apt install patchelf file
+./packaging/build-appimage.sh
+```
+
+The script expects the same packages as above plus `patchelf` and `file`. The
+AppImage tools are downloaded once into `~/.cache/stickynotes-appimage-tools`
+(override with `APPIMAGE_TOOLS_DIR`) and reused on later builds. The result is
+`dist/StickyNotes-<version>-x86_64.AppImage`.
+
+If the build host does not have Qt 6 and the X11 development packages, the
+build can run inside a container with the exact required packages:
+
+```bash
+STICKYNOTES_APPIMAGE_DOCKER=1 ./packaging/build-appimage.sh
+```
+
 ## Windows
 
 ### Requirements
