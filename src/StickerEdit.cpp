@@ -93,7 +93,7 @@ StickerEdit::StickerEdit(QWidget* parent) : QTextEdit(parent)
     setFocusPolicy(Qt::TabFocus);
     verticalScrollBar()->setAttribute(Qt::WA_OpaquePaintEvent, false);
     setStyleSheet(
-        "QTextEdit { border: none; font-size:12pt; top-margin: 0px;}"
+        "QTextEdit { border: none; font-size:12pt; }"
         "QScrollBar::up-arrow, QScrollBar::down-arrow, QScrollBar::add-line, QScrollBar::sub-line { background: transparent; border: none; }"
         "QScrollBar::sub-page, QScrollBar::add-page { background: transparent; }"
     );
