@@ -6,7 +6,7 @@ A small desktop application for creating sticky notes on Linux and Windows. Note
   <img src="media/sticky_notes.png" alt="StickyNotes on the desktop" width="480">
 </p>
 
-## Screenshots
+## Demonstration
 
 <p align="center">
   <img src="media/creating-stickers.webp" alt="Creating and editing a sticky note" width="300">
@@ -21,6 +21,46 @@ A small desktop application for creating sticky notes on Linux and Windows. Note
   <img src="media/colors.webp" alt="Changing colors" width="300"><br>
   <sub>Stacking &nbsp;&nbsp;|&nbsp;&nbsp; Colors</sub>
 </p>
+
+## Features
+
+### Physical dragging
+
+Sitckers move and rotate by physics just like you drag them on a desk with your cursor.
+
+### Easy sticker creating
+
+Just drag cloner sticker from right bottom desktop corner wherever you want,
+
+### Markdown styling
+
+You can use \**markdown*\* to style your text! Sticker uses [GitHub flavor](https://docs.github.com/en/get-started/writing-on-github/getting-started-with-writing-and-formatting-on-github/basic-writing-and-formatting-syntax) of markdown, including clickable task lists (`- [ ]` and `- [x]`)!
+
+### Text Keybinds
+
+To make markdown eaasire to use, there was made keybinds:
+- **Ctrl+B** - \*\***Bold**\*\*
+- **Ctrl+I** - \**Italic*\*
+- **Ctrl+U** - \_ <ins>Underlined</ins>_ \_ <!-- WTF it uses <ins> actually and also doesn't work lol-->
+- **Ctrl+L** - \[link\](\<auto paste link from clipboard\>)
+- **Ctrl+L** - \<!--Hidden (only visible in edit mode)-->
+- **Ctrl+Shift+X** - \~\~~~Strikethrough~~\~\~
+- **Ctrl+Shift+M** -`` `code` ``
+- **Ctrl+Shift+.** - > Qoute
+
+
+### Stacking
+
+Move your stickers under all windows or make it always visible on the top with stacking option.
+
+### Colors
+
+Set your stickers <span style="color: magenta;">color style</span>. Any color you want. Text color is automatically adapted to be in contrast with background.
+
+### Tray
+
+Use tray to rise the cloner sticker, open stickers directory or close this app.
+
 
 # Installation
 
