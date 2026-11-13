@@ -34,7 +34,8 @@ Just drag cloner sticker from right bottom desktop corner wherever you want,
 
 ### Markdown styling
 
-You can use \**markdown*\* to style your text! Sticker uses [GitHub flavor](https://docs.github.com/en/get-started/writing-on-github/getting-started-with-writing-and-formatting-on-github/basic-writing-and-formatting-syntax) of markdown, including clickable task lists (`- [ ]` and `- [x]`)!
+You can use \**markdown*\* to style your text! Sticker uses [GitHub flavor](https://docs.github.com/en/get-started/writing-on-github/getting-started-with-writing-and-formatting-on-github/basic-writing-and-formatting-syntax) of markdown, including clickable task list  
+(`- [ ]` and `- [x]`)!
 
 ### Text Keybinds
 
@@ -43,7 +44,7 @@ To make markdown eaasire to use, there was made keybinds:
 - **Ctrl+I** - \**Italic*\*
 - **Ctrl+U** - \_ <ins>Underlined</ins>_ \_ <!-- WTF it uses <ins> actually and also doesn't work lol-->
 - **Ctrl+L** - \[link\](\<auto paste link from clipboard\>)
-- **Ctrl+L** - \<!--Hidden (only visible in edit mode)-->
+- **Ctrl+H** - \<!--Hidden (only visible in edit mode)-->
 - **Ctrl+Shift+X** - \~\~~~Strikethrough~~\~\~
 - **Ctrl+Shift+M** -`` `code` ``
 - **Ctrl+Shift+.** - > Qoute
@@ -55,7 +56,7 @@ Move your stickers under all windows or make it always visible on the top with s
 
 ### Colors
 
-Set your stickers <span style="color: magenta;">color style</span>. Any color you want. Text color is automatically adapted to be in contrast with background.
+Set your stickers color style. Any color you want. Text color is automatically adapted to be in contrast with background.
 
 ### Tray
 
