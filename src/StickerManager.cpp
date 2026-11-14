@@ -24,9 +24,13 @@ StickerManager::StickerManager()
 
     menu = new QMenu();
 
-    QAction* openFolderAction = menu->addAction("Open Stickers Folder");
-    connect(openFolderAction, &QAction::triggered,
-        this, &StickerManager::onOpenStickersFolder);
+    QAction* openDirAction = menu->addAction("Open Stickers Directory");
+    connect(openDirAction, &QAction::triggered,
+        this, &StickerManager::onOpenStickersDir);
+
+    QAction* openConfigAction = menu->addAction("Open Config");
+    connect(openConfigAction, &QAction::triggered,
+        this, &StickerManager::onOpenConfig);
 
     QAction* quitAction = menu->addAction("Quit");
     connect(quitAction, &QAction::triggered, qApp, &QApplication::quit);
@@ -141,10 +145,16 @@ void StickerManager::onTrayIconActivated(QSystemTrayIcon::ActivationReason reaso
         createStickerAt(screenCenter());
 }
 
-void StickerManager::onOpenStickersFolder()
+void StickerManager::onOpenStickersDir()
 {
     QDesktopServices::openUrl(
         QUrl::fromLocalFile(QString::fromStdString(storage->getPath())));
+}
+
+void StickerManager::onOpenConfig()
+{
+    QDesktopServices::openUrl(
+        QUrl::fromLocalFile(ConfigManager::getInstance().getPath()));
 }
 
 // // Sticker Management
