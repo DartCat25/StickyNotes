@@ -406,7 +406,7 @@ void StickerWrapper::mouseMoveEvent(QMouseEvent *event)
             const PhysicsConfig& physics = config->physics;
             double maxAngle = physics.maxAngle;
 
-            if (config->cloner.anchorAtGrab)
+            if (config->sticker.anchorAtGrab)
             {
                 double centerAngle = std::atan2(center.x() - pivot.x(), center.y() - pivot.y()) * RAD2DEG;
         

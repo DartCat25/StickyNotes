@@ -5,10 +5,8 @@
 #include <cstdint>
 
 struct StickerConfig {
-    QColor color;
-    uint32_t width;
-    uint32_t height;
     bool rotationEnabled;
+    bool anchorAtGrab;
 };
 
 struct TextConfig {
@@ -22,7 +20,9 @@ struct ClonerConfig {
     int x;
     int y;
     bool positionSet;
-    bool anchorAtGrab;
+    QColor color;
+    uint32_t width;
+    uint32_t height;
 };
 
 struct PhysicsConfig {

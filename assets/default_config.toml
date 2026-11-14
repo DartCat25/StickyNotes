@@ -1,39 +1,36 @@
 # StickyNotes settings.
-#
-# This file is created on the first run and is never overwritten afterwards.
-# Any missing key falls back to its default, unknown keys are ignored.
+# Created on the first run, never overwritten afterwards. Missing keys fall
+# back to the defaults, unknown keys are ignored.
 
 [sticker]
-# Background color of a new sticker and of the cloner.
-color = "#fef5c1"
-# Reserved: resizing is a separate feature, these values are not applied yet.
-width = 300
-height = 300
 # Tilt the sticker while it is dragged.
-rotation_enabled = true
+ROTATION_ENABLED = true
+# Hinge the tilt at the grabbed point.
+ANCHOR_AT_GRAB = false
 
 [text]
 # Empty family means the system font.
-family = ""
-point_size = 12
-# 100..900, same as QFont::Weight.
-weight = 400
+FAMILY = ""
+POINT_SIZE = 12
+# 100..900, QFont::Weight.
+WEIGHT = 400
 
 [cloner]
-# The cloner creates stickers by dragging. Without it a sticker is created by
-# double clicking the tray icon.
-enabled = true
-# Position of the cloner window. Uncomment both keys to pin it, otherwise the
-# cloner sits in the bottom right corner of the primary screen.
-# x = 100
-# y = 100
-# The sticker hangs from the point it was grabbed by, not from its center.
-anchor_at_grab = true
+# Without the cloner a sticker is created by double clicking the tray icon.
+ENABLED = true
+# Position of the cloner window, defaults to the bottom right corner of the
+# primary screen.
+# X = 100
+# Y = 100
+# Defaults of a new sticker.
+COLOR = "#fef5c1"
+WIDTH = 300
+HEIGHT = 300
 
 [physics]
-# How fast the tilt decays: 0..1, 1 means it never decays.
-fade = 0.94
-# How strongly horizontal mouse movement tilts the sticker.
-force = 0.1
+# How fast the tilt decays, 0..1.
+FADE = 0.94
+# Tilt strength of horizontal mouse movement.
+FORCE = 0.1
 # Tilt limit in degrees.
-max_angle = 30.0
+MAX_ANGLE = 30.0

@@ -62,10 +62,8 @@ QString ConfigManager::defaultPath()
 
 void ConfigManager::resetDefaults()
 {
-    config.sticker.color = QColor("#fef5c1");
-    config.sticker.width = 300;
-    config.sticker.height = 300;
     config.sticker.rotationEnabled = true;
+    config.sticker.anchorAtGrab = true;
 
     config.text.family = "";
     config.text.pointSize = 12;
@@ -75,7 +73,9 @@ void ConfigManager::resetDefaults()
     config.cloner.x = 0;
     config.cloner.y = 0;
     config.cloner.positionSet = false;
-    config.cloner.anchorAtGrab = true;
+    config.cloner.color = QColor("#fef5c1");
+    config.cloner.width = 300;
+    config.cloner.height = 300;
 
     config.physics.fade = 0.94;
     config.physics.force = 0.1;
@@ -152,42 +152,44 @@ bool ConfigManager::readFile()
         return false;
     }
 
-    config.sticker.color = QColor(QString::fromStdString(
-        table["sticker"]["color"].value_or("#fef5c1")));
-
-    if (!config.sticker.color.isValid())
-        config.sticker.color = QColor("#fef5c1");
-
-    config.sticker.width = std::clamp(
-        table["sticker"]["width"].value_or(300), 1, 10000);
-    config.sticker.height = std::clamp(
-        table["sticker"]["height"].value_or(300), 1, 10000);
     config.sticker.rotationEnabled =
-        table["sticker"]["rotation_enabled"].value_or(true);
+        table["sticker"]["ROTATION_ENABLED"].value_or(true);
+    config.sticker.anchorAtGrab =
+        table["sticker"]["ANCHOR_AT_GRAB"].value_or(true);
 
     config.text.family = QString::fromStdString(
-        table["text"]["family"].value_or(""));
+        table["text"]["FAMILY"].value_or(""));
     config.text.pointSize = std::clamp(
-        table["text"]["point_size"].value_or(12), 1, 200);
+        table["text"]["POINT_SIZE"].value_or(12), 1, 200);
     config.text.weight = std::clamp(
-        table["text"]["weight"].value_or(400), 100, 900);
+        table["text"]["WEIGHT"].value_or(400), 100, 900);
 
-    config.cloner.enabled = table["cloner"]["enabled"].value_or(true);
-    config.cloner.anchorAtGrab = table["cloner"]["anchor_at_grab"].value_or(true);
+    config.cloner.enabled = table["cloner"]["ENABLED"].value_or(true);
 
-    auto x = table["cloner"]["x"].value<int>();
-    auto y = table["cloner"]["y"].value<int>();
+    config.cloner.color = QColor(QString::fromStdString(
+        table["cloner"]["COLOR"].value_or("#fef5c1")));
+
+    if (!config.cloner.color.isValid())
+        config.cloner.color = QColor("#fef5c1");
+
+    config.cloner.width = std::clamp(
+        table["cloner"]["WIDTH"].value_or(300), 1, 10000);
+    config.cloner.height = std::clamp(
+        table["cloner"]["HEIGHT"].value_or(300), 1, 10000);
+
+    auto x = table["cloner"]["X"].value<int>();
+    auto y = table["cloner"]["Y"].value<int>();
 
     config.cloner.positionSet = x.has_value() && y.has_value();
     config.cloner.x = x.value_or(0);
     config.cloner.y = y.value_or(0);
 
     config.physics.fade = (float)std::clamp(
-        table["physics"]["fade"].value_or(0.94), 0.0, 1.0);
+        table["physics"]["FADE"].value_or(0.94), 0.0, 1.0);
     config.physics.force = (float)std::clamp(
-        table["physics"]["force"].value_or(0.1), 0.0, 10.0);
+        table["physics"]["FORCE"].value_or(0.1), 0.0, 10.0);
     config.physics.maxAngle = (float)std::clamp(
-        table["physics"]["max_angle"].value_or(30.0), 0.0, 180.0);
+        table["physics"]["MAX_ANGLE"].value_or(30.0), 0.0, 180.0);
 
     return true;
 }

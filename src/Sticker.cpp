@@ -87,7 +87,7 @@ Sticker::Sticker(StickerWrapper* parent) : QFrame()
 
     vbox->addWidget(textEdit, 1);
 
-    setBackgroundColor(ConfigManager::getInstance().getConfig().sticker.color);
+    setBackgroundColor(ConfigManager::getInstance().getConfig().cloner.color);
 }
 
 Sticker::~Sticker()
