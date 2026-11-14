@@ -1,11 +1,13 @@
 #pragma once
 
+#include "ConfigWindow.h"
 #include "StickerStorage.h"
 #include "StickerWrapper.h"
 #include <QObject>
 #include <QPoint>
 #include <QSystemTrayIcon>
 #include <QMenu>
+#include <QPointer>
 
 struct Config;
 
@@ -29,7 +31,7 @@ private slots:
 
     void onTrayIconActivated(QSystemTrayIcon::ActivationReason reason);
     void onOpenStickersDir();
-    void onOpenConfig();
+    void onOpenSettings();
 
 private:
     void connectSticker(StickerWrapper* sticker);
@@ -46,4 +48,5 @@ private:
     bool shuttingDown;
 
     QMenu* menu;
+    QPointer<ConfigWindow> configWindow;
 };

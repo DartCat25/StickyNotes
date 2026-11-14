@@ -1,6 +1,5 @@
 # StickyNotes settings.
-# Created on the first run, never overwritten afterwards. Missing keys fall
-# back to the defaults, unknown keys are ignored.
+# Missing keys fall back to the defaults, unknown keys are ignored.
 
 [sticker]
 # Tilt the sticker while it is dragged.

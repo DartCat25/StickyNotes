@@ -1,5 +1,6 @@
 #pragma once
 
+#include <QByteArray>
 #include <QColor>
 #include <QString>
 #include <cstdint>
@@ -43,9 +44,12 @@ public:
     static ConfigManager& getInstance();
 
     bool load();
+    bool save(const Config& newConfig);
 
     const Config& getConfig() const;
     const QString& getPath() const;
+
+    static Config getDefaultConfig();
 
     ConfigManager(const ConfigManager&) = delete;
     ConfigManager& operator=(const ConfigManager&) = delete;
@@ -54,8 +58,14 @@ private:
     ConfigManager();
 
     static QString defaultPath();
+    static void fillDefaults(Config& config);
+    static bool parseConfig(
+        const QByteArray& content,
+        const QString& name,
+        Config& config);
+    static QString serialize(const Config& config);
+    static QString formatFloat(float value);
 
-    void resetDefaults();
     bool createDefaultFile();
     bool readFile();
 

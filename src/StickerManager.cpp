@@ -12,6 +12,7 @@ StickerManager::StickerManager()
     shuttingDown = false;
     storage = new StickerStorage();
     cloner = nullptr;
+    configWindow = nullptr;
     config = &ConfigManager::getInstance().getConfig();
 
     //Config tray
@@ -28,9 +29,9 @@ StickerManager::StickerManager()
     connect(openDirAction, &QAction::triggered,
         this, &StickerManager::onOpenStickersDir);
 
-    QAction* openConfigAction = menu->addAction("Open Config");
-    connect(openConfigAction, &QAction::triggered,
-        this, &StickerManager::onOpenConfig);
+    QAction* settingsAction = menu->addAction("Settings");
+    connect(settingsAction, &QAction::triggered,
+        this, &StickerManager::onOpenSettings);
 
     QAction* quitAction = menu->addAction("Quit");
     connect(quitAction, &QAction::triggered, qApp, &QApplication::quit);
@@ -151,10 +152,17 @@ void StickerManager::onOpenStickersDir()
         QUrl::fromLocalFile(QString::fromStdString(storage->getPath())));
 }
 
-void StickerManager::onOpenConfig()
+void StickerManager::onOpenSettings()
 {
-    QDesktopServices::openUrl(
-        QUrl::fromLocalFile(ConfigManager::getInstance().getPath()));
+    if (!configWindow)
+    {
+        configWindow = new ConfigWindow();
+        configWindow->setAttribute(Qt::WA_DeleteOnClose);
+    }
+
+    configWindow->show();
+    configWindow->raise();
+    configWindow->activateWindow();
 }
 
 // // Sticker Management
