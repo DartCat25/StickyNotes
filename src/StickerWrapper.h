@@ -9,6 +9,8 @@
 #include <qmainwindow.h>
 #include "structs.h"
 
+struct Config;
+
 class StickerWrapper : public QGraphicsView
 {
     Q_OBJECT
@@ -85,6 +87,8 @@ private:
     Sticker* sticker;
     QGraphicsScene* scene;
     QGraphicsProxyWidget* proxy;
+
+    const Config* config;
 
     QPointF lastMousePos;
     QPointF pivot;

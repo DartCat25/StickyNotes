@@ -7,6 +7,8 @@
 #include <QSystemTrayIcon>
 #include <QMenu>
 
+struct Config;
+
 class StickerManager : public QObject {
     Q_OBJECT
 
@@ -39,6 +41,7 @@ private:
 
     StickerWrapper* cloner;
     StickerStorage* storage;
+    const Config* config;
     bool shuttingDown;
 
     QMenu* menu;

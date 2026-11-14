@@ -12,11 +12,12 @@ StickerManager::StickerManager()
     shuttingDown = false;
     storage = new StickerStorage();
     cloner = nullptr;
+    config = &ConfigManager::getInstance().getConfig();
 
     //Config tray
     QSystemTrayIcon *trayIcon = new QSystemTrayIcon(QIcon(":/assets/icon.png"), this);
 
-    if (ConfigManager::getInstance().getConfig().cloner.enabled)
+    if (config->cloner.enabled)
         trayIcon->setToolTip("StickyNotes");
     else
         trayIcon->setToolTip("StickyNotes - double click to create a sticker");
@@ -42,7 +43,7 @@ StickerManager::StickerManager()
         connectSticker(sticker);
     }
 
-    if (ConfigManager::getInstance().getConfig().cloner.enabled)
+    if (config->cloner.enabled)
         createCloner(defaultClonerPos());
 }
 
@@ -210,11 +211,9 @@ void StickerManager::createStickerAt(QPoint pos)
 
 QPoint StickerManager::defaultClonerPos()
 {
-    const Config& config = ConfigManager::getInstance().getConfig();
-
-    if (config.cloner.positionSet)
+    if (config->cloner.positionSet)
     {
-        QPoint pos(config.cloner.x, config.cloner.y);
+        QPoint pos(config->cloner.x, config->cloner.y);
 
         for (QScreen* screen : QApplication::screens())
         {

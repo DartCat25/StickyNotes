@@ -31,9 +31,6 @@
 #define WIDTH 412
 #define HEIGHT 412
 
-#define MAX_ANGLE 30.0
-#define FORCE 0.1
-#define FADE 0.94
 // #define CENTER_MASS_GRAVITY
 
 // // Constructor / Destructor
@@ -45,6 +42,7 @@ StickerWrapper::StickerWrapper(uint32_t id, StackPos pos, QWidget* parent)
     angle = 0;
     stackPos = SP_FREE;
     this->id = id;
+    config = &ConfigManager::getInstance().getConfig();
     
     setAttribute(Qt::WA_DeleteOnClose); //Enforce deletion
     setAttribute(Qt::WA_TranslucentBackground);
@@ -169,7 +167,7 @@ void StickerWrapper::startDragging(QPointF start)
 
     QPointF center = QPointF(WIDTH/2.0, HEIGHT/2.0);
 
-    if (ConfigManager::getInstance().getConfig().cloner.anchorAtGrab)
+    if (config->cloner.anchorAtGrab)
         pivot = rotInvert.map(start - pos() - center) + center;
     else
         pivot = center;
@@ -402,20 +400,23 @@ void StickerWrapper::mouseMoveEvent(QMouseEvent *event)
         QPointF vec = current - lastMousePos;
 
         QPointF center = proxy->mapToScene(proxy->rect().center());
-        
+
+        const PhysicsConfig& physics = config->physics;
+        double maxAngle = physics.maxAngle;
+
         #ifdef CENTER_MASS_GRAVITY
         const double RAD2DEG = 180.0 / 3.141592653589;
         double centerAngle = std::atan2(center.x() - pivot.x(), center.y() - pivot.y()) * RAD2DEG;
 
-        double newAngle = std::min(std::max((angle - centerAngle) * FADE + centerAngle + vec.x() * FORCE, -MAX_ANGLE), MAX_ANGLE);
+        double newAngle = std::min(std::max((angle - centerAngle) * physics.fade + centerAngle + vec.x() * physics.force, -maxAngle), maxAngle);
         #else
-        double newAngle = std::min(std::max(angle * FADE + vec.x() * FORCE, -MAX_ANGLE), MAX_ANGLE);
+        double newAngle = std::min(std::max(angle * physics.fade + vec.x() * physics.force, -maxAngle), maxAngle);
         #endif
 
         QTransform rotateTransf = QTransform();
         rotateTransf.rotate(newAngle);
         
-        if (ConfigManager::getInstance().getConfig().cloner.anchorAtGrab)
+        if (config->cloner.anchorAtGrab)
             curPos = current - rotateTransf.map(pivot - center) - center;
         else
             curPos = pos() + vec;
