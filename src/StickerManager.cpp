@@ -225,6 +225,8 @@ void StickerManager::createStickerAt(QPoint pos)
     sticker->move(pos - sticker->rect().center());
 
     persistSticker(sticker);
+    sticker->raise();
+    sticker->activateWindow();
 }
 
 QPoint StickerManager::defaultClonerPos()
