@@ -143,7 +143,11 @@ void StickerManager::onTrayIconActivated(QSystemTrayIcon::ActivationReason reaso
     }
 
     if (reason == QSystemTrayIcon::DoubleClick && !cloner)
-        createStickerAt(screenCenter());
+    {
+        StickerWrapper* sticker = createStickerAt(screenCenter());
+        sticker->raise();
+        sticker->activateWindow();
+    }
 }
 
 void StickerManager::onOpenStickersDir()
@@ -217,7 +221,7 @@ void StickerManager::persistSticker(StickerWrapper* sticker)
     sticker->setId(id);
 }
 
-void StickerManager::createStickerAt(QPoint pos)
+StickerWrapper* StickerManager::createStickerAt(QPoint pos)
 {
     StickerWrapper* sticker = new StickerWrapper(UINT32_MAX, SP_FREE);
     connectSticker(sticker);
@@ -225,8 +229,7 @@ void StickerManager::createStickerAt(QPoint pos)
     sticker->move(pos - sticker->rect().center());
 
     persistSticker(sticker);
-    sticker->raise();
-    sticker->activateWindow();
+    return sticker;
 }
 
 QPoint StickerManager::defaultClonerPos()
