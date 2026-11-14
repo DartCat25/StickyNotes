@@ -31,7 +31,7 @@
 #define WIDTH 412
 #define HEIGHT 412
 
-// #define CENTER_MASS_GRAVITY
+constexpr double RAD2DEG = 180.0 / 3.141592653589;
 
 // // Constructor / Destructor
 
@@ -167,10 +167,7 @@ void StickerWrapper::startDragging(QPointF start)
 
     QPointF center = QPointF(WIDTH/2.0, HEIGHT/2.0);
 
-    if (config->cloner.anchorAtGrab)
-        pivot = rotInvert.map(start - pos() - center) + center;
-    else
-        pivot = center;
+    pivot = rotInvert.map(start - pos() - center) + center;
 
     dragging = true;
 }
@@ -400,33 +397,40 @@ void StickerWrapper::mouseMoveEvent(QMouseEvent *event)
         QPointF vec = current - lastMousePos;
 
         QPointF center = proxy->mapToScene(proxy->rect().center());
-
-        const PhysicsConfig& physics = config->physics;
-        double maxAngle = physics.maxAngle;
-
-        #ifdef CENTER_MASS_GRAVITY
-        const double RAD2DEG = 180.0 / 3.141592653589;
-        double centerAngle = std::atan2(center.x() - pivot.x(), center.y() - pivot.y()) * RAD2DEG;
-
-        double newAngle = std::min(std::max((angle - centerAngle) * physics.fade + centerAngle + vec.x() * physics.force, -maxAngle), maxAngle);
-        #else
-        double newAngle = std::min(std::max(angle * physics.fade + vec.x() * physics.force, -maxAngle), maxAngle);
-        #endif
-
-        QTransform rotateTransf = QTransform();
-        rotateTransf.rotate(newAngle);
         
-        if (config->cloner.anchorAtGrab)
+        
+        if (config->sticker.rotationEnabled)
+        {
+            double newAngle = angle;
+            QTransform rotateTransf = QTransform();
+            const PhysicsConfig& physics = config->physics;
+            double maxAngle = physics.maxAngle;
+
+            if (config->cloner.anchorAtGrab)
+            {
+                double centerAngle = std::atan2(center.x() - pivot.x(), center.y() - pivot.y()) * RAD2DEG;
+        
+                newAngle = std::min(std::max((angle - centerAngle) * physics.fade + centerAngle + vec.x() * physics.force, -maxAngle), maxAngle);
+            }
+            else
+                newAngle = std::min(std::max(angle * physics.fade + vec.x() * physics.force, -maxAngle), maxAngle);
+            
+            rotateTransf.rotate(newAngle);
             curPos = current - rotateTransf.map(pivot - center) - center;
+
+            rotate(newAngle);
+        }
         else
+        {
             curPos = pos() + vec;
+        }
+        
         
         #ifdef  Q_OS_LINUX
         moveRaw(curPos.toPoint());
         #else
         move(curPos.toPoint());
         #endif
-        rotate(newAngle);
         lastMousePos = current;
         event->accept();
         return;
