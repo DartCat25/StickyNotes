@@ -1,4 +1,5 @@
 #include "StickerWrapper.h"
+#include "ConfigManager.h"
 #include <qbitmap.h>
 #include <qcoreevent.h>
 #include <qdebug.h>
@@ -167,7 +168,12 @@ void StickerWrapper::startDragging(QPointF start)
     rotInvert.rotate(-angle);
 
     QPointF center = QPointF(WIDTH/2.0, HEIGHT/2.0);
-    pivot = rotInvert.map(start - pos() - center) + center;
+
+    if (ConfigManager::getInstance().getConfig().cloner.anchorAtGrab)
+        pivot = rotInvert.map(start - pos() - center) + center;
+    else
+        pivot = center;
+
     dragging = true;
 }
 
@@ -392,7 +398,7 @@ void StickerWrapper::mouseMoveEvent(QMouseEvent *event)
     if ((event->buttons() & Qt::LeftButton) && dragging)
     {
         QPointF current = event->globalPosition();
-        QPointF curPos = pos();
+        QPointF curPos;
         QPointF vec = current - lastMousePos;
 
         QPointF center = proxy->mapToScene(proxy->rect().center());
@@ -409,7 +415,10 @@ void StickerWrapper::mouseMoveEvent(QMouseEvent *event)
         QTransform rotateTransf = QTransform();
         rotateTransf.rotate(newAngle);
         
-        curPos = current - rotateTransf.map(pivot - center) - center;
+        if (ConfigManager::getInstance().getConfig().cloner.anchorAtGrab)
+            curPos = current - rotateTransf.map(pivot - center) - center;
+        else
+            curPos = pos() + vec;
         
         #ifdef  Q_OS_LINUX
         moveRaw(curPos.toPoint());

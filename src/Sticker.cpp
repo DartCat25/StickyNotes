@@ -1,4 +1,5 @@
 #include "Sticker.h"
+#include "ConfigManager.h"
 #include "StickerWrapper.h"
 #include <qaction.h>
 #include <qapplication.h>
@@ -86,7 +87,7 @@ Sticker::Sticker(StickerWrapper* parent) : QFrame()
 
     vbox->addWidget(textEdit, 1);
 
-    setBackgroundColor("#fef5c1");
+    setBackgroundColor(ConfigManager::getInstance().getConfig().sticker.color);
 }
 
 Sticker::~Sticker()

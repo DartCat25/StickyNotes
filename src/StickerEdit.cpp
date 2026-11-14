@@ -1,4 +1,5 @@
 #include "StickerEdit.h"
+#include "ConfigManager.h"
 #include "Sticker.h"
 #include <qabstracttextdocumentlayout.h>
 #include <qaction.h>
@@ -14,6 +15,7 @@
 #include <qurl.h>
 #include <qwindowdefs.h>
 #include <QClipboard>
+#include <QFont>
 #include <QRegularExpression>
 #include <QTextList>
 #include <QMimeData>
@@ -89,11 +91,24 @@ StickerEdit::StickerEdit(QWidget* parent) : QTextEdit(parent)
     checkboxPressed = false;
     linkPressed = false;
 
+    const TextConfig& text = ConfigManager::getInstance().getConfig().text;
+
+    QFont font = this->font();
+
+    if (!text.family.isEmpty())
+        font.setFamily(text.family);
+
+    font.setPointSize(text.pointSize);
+    font.setWeight((QFont::Weight)text.weight);
+
+    setFont(font);
+    document()->setDefaultFont(font);
+
     // Clicks no longer take the focus by themselves, see mousePressEvent.
     setFocusPolicy(Qt::TabFocus);
     verticalScrollBar()->setAttribute(Qt::WA_OpaquePaintEvent, false);
     setStyleSheet(
-        "QTextEdit { border: none; font-size:12pt; }"
+        "QTextEdit { border: none; }"
         "QScrollBar::up-arrow, QScrollBar::down-arrow, QScrollBar::add-line, QScrollBar::sub-line { background: transparent; border: none; }"
         "QScrollBar::sub-page, QScrollBar::add-page { background: transparent; }"
     );

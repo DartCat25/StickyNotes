@@ -32,7 +32,10 @@ private:
     void connectSticker(StickerWrapper* sticker);
     void createCloner(QPoint pos);
     void materializeCloner(StickerWrapper* sticker);
+    void persistSticker(StickerWrapper* sticker);
+    void createStickerAt(QPoint pos);
     QPoint defaultClonerPos();
+    QPoint screenCenter();
 
     StickerWrapper* cloner;
     StickerStorage* storage;

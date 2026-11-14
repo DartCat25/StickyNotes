@@ -1,4 +1,5 @@
 #include "StickerManager.h"
+#include "ConfigManager.h"
 #include <QApplication>
 #include <QScreen>
 #include <QAction>
@@ -14,7 +15,11 @@ StickerManager::StickerManager()
 
     //Config tray
     QSystemTrayIcon *trayIcon = new QSystemTrayIcon(QIcon(":/assets/icon.png"), this);
-    trayIcon->setToolTip("StickyNotes");
+
+    if (ConfigManager::getInstance().getConfig().cloner.enabled)
+        trayIcon->setToolTip("StickyNotes");
+    else
+        trayIcon->setToolTip("StickyNotes - double click to create a sticker");
 
     menu = new QMenu();
 
@@ -37,7 +42,8 @@ StickerManager::StickerManager()
         connectSticker(sticker);
     }
 
-    createCloner(defaultClonerPos());
+    if (ConfigManager::getInstance().getConfig().cloner.enabled)
+        createCloner(defaultClonerPos());
 }
 
 StickerManager::~StickerManager()
@@ -121,10 +127,17 @@ void StickerManager::onCloseRequested()
 
 void StickerManager::onTrayIconActivated(QSystemTrayIcon::ActivationReason reason)
 {
-    if (!cloner || reason != QSystemTrayIcon::Trigger)
+    if (reason == QSystemTrayIcon::Trigger)
+    {
+        if (!cloner)
+            return;
+
+        cloner->activateWindow();
         return;
-    
-    cloner->activateWindow();
+    }
+
+    if (reason == QSystemTrayIcon::DoubleClick && !cloner)
+        createStickerAt(screenCenter());
 }
 
 void StickerManager::onOpenStickersFolder()
@@ -169,22 +182,55 @@ void StickerManager::createCloner(QPoint pos)
 
 void StickerManager::materializeCloner(StickerWrapper* sticker)
 {
-    StickerData data = sticker->getData();
+    persistSticker(sticker);
 
-    uint32_t id = storage->createSticker(data);
-
-    sticker->setId(id);
     cloner = nullptr;
 
     createCloner(defaultClonerPos());
 }
 
+void StickerManager::persistSticker(StickerWrapper* sticker)
+{
+    StickerData data = sticker->getData();
+
+    uint32_t id = storage->createSticker(data);
+
+    sticker->setId(id);
+}
+
+void StickerManager::createStickerAt(QPoint pos)
+{
+    StickerWrapper* sticker = new StickerWrapper(UINT32_MAX, SP_FREE);
+    connectSticker(sticker);
+
+    sticker->move(pos - sticker->rect().center());
+
+    persistSticker(sticker);
+}
+
 QPoint StickerManager::defaultClonerPos()
 {
+    const Config& config = ConfigManager::getInstance().getConfig();
+
+    if (config.cloner.positionSet)
+    {
+        QPoint pos(config.cloner.x, config.cloner.y);
+
+        for (QScreen* screen : QApplication::screens())
+        {
+            if (screen->availableGeometry().contains(pos))
+                return pos;
+        }
+    }
+
     QSize screenSize = QApplication::primaryScreen()->availableSize();
 
-    // TODO: Take the position from the config singleton.
     return QPoint(
         screenSize.width() - 400,
         screenSize.height() - 100);
+}
+
+QPoint StickerManager::screenCenter()
+{
+    return QApplication::primaryScreen()->availableGeometry().center();
 }
