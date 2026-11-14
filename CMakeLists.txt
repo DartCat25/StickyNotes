@@ -20,6 +20,7 @@ add_executable(StickyNotes WIN32 ${SOURCES})
 
 target_include_directories(StickyNotes PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/src
+    lib
 )
 
 target_link_libraries(StickyNotes PRIVATE 

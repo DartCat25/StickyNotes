@@ -230,3 +230,8 @@ CMake Tools at the Qt kit via `CMAKE_PREFIX_PATH`. Debugging uses the `cppvsdbg`
 debugger.
 
 Sticker data is stored in `%LOCALAPPDATA%\StickyNotes\stickers`.
+
+
+# Licensing
+
+- [toml++](https://github.com/marzer/tomlplusplus) ([MIT license](licenses/tomlplusplus))
