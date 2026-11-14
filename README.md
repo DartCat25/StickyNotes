@@ -139,6 +139,10 @@ cmake --build build -j"$(nproc)"
 
 Sticker data is stored in `~/.local/share/StickyNotes/stickers`.
 
+Configuration is stored in `~/.config/StickyNotes/config.toml`. The file is
+created with the default values on the first run and is never overwritten after
+that.
+
 ### AppImage
 
 `packaging/build-appimage.sh` builds the application and packages it into an
@@ -230,6 +234,10 @@ CMake Tools at the Qt kit via `CMAKE_PREFIX_PATH`. Debugging uses the `cppvsdbg`
 debugger.
 
 Sticker data is stored in `%LOCALAPPDATA%\StickyNotes\stickers`.
+
+Configuration is stored in `%LOCALAPPDATA%\StickyNotes\config.toml`. The file
+is created with the default values on the first run and is never overwritten
+after that.
 
 
 # Licensing

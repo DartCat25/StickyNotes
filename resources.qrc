@@ -1,5 +1,6 @@
 <RCC>
   <qresource prefix="/assets">
     <file alias="icon.png">assets/icon.png</file>
+    <file alias="default_config.toml">assets/default_config.toml</file>
   </qresource>
 </RCC>
